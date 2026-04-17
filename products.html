@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eman Warsaw | Products</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="icon" href="logo.png" type="image/png"/>
+</head>
+<body>
+<div id="preloader"><img src="logo.png" alt="" class="loader-logo" onerror="this.style.display='none'"/></div>
+
+<nav class="navbar" id="navbar"></nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1 data-key="products_title"></h1>
+    <div class="line"></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <p class="reveal" data-key="products_intro" style="max-width:820px;margin:0 auto 48px;text-align:center;font-size:0.95rem;color:#444;line-height:1.9"></p>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<div id="fab"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared.js"></script>
+<script>
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  const prods = EW.getProducts();
+  const cta = EW.t('products_cta');
+  if (!prods.length) {
+    grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;padding:40px">---</p>';
+    return;
+  }
+  grid.innerHTML = prods.map(p => `
+    <div class="product-card reveal">
+      <img class="pc-image" src="${p.image||''}" alt="" onerror="this.style.display='none'"/>
+      <div class="pc-body">
+        <div class="pc-icon"><i class="${p.icon||'fas fa-cube'}"></i></div>
+        <h3>${EW.loc(p.name)}</h3>
+        <p>${EW.loc(p.short_desc)}</p>
+        <a href="product.html?slug=${encodeURIComponent(p.slug)}" class="pc-cta">${cta}</a>
+      </div>
+    </div>`).join('');
+  document.querySelectorAll('#productsGrid .reveal').forEach(el => {
+    new IntersectionObserver((entries, o) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); o.unobserve(e.target); }});
+    }, { threshold:0.1 }).observe(el);
+  });
+}
+window.onReady = renderProducts;
+window.onLangChange = renderProducts;
+EW.sharedInit('products');
+</script>
+</body>
+</html>

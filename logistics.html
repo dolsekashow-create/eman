@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eman Warsaw | Logistics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="icon" href="logo.png" type="image/png"/>
+</head>
+<body>
+<div id="preloader"><img src="logo.png" alt="" class="loader-logo" onerror="this.style.display='none'"/></div>
+
+<nav class="navbar" id="navbar"></nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1 data-key="logi_title"></h1>
+    <div class="line"></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <div class="logi-text reveal" style="max-width:880px;margin:0 auto 40px;text-align:center">
+      <p data-key="logi_intro"></p>
+      <p data-key="logi_intro2"></p>
+    </div>
+
+    <div class="logi-cols" style="margin-top:40px">
+      <div class="logi-box reveal">
+        <h4 data-key="logi_what_title"></h4>
+        <ul class="logi-list">
+          <li data-key="logi_what_1"></li>
+          <li data-key="logi_what_2"></li>
+          <li data-key="logi_what_3"></li>
+          <li data-key="logi_what_4"></li>
+          <li data-key="logi_what_5"></li>
+          <li data-key="logi_what_6"></li>
+        </ul>
+      </div>
+      <div>
+        <div class="logi-box reveal">
+          <h4 style="display:flex;align-items:center;gap:8px"><i class="fas fa-flask" style="color:var(--gold)"></i> <span data-key="logi_caco_title"></span></h4>
+          <p style="font-size:0.88rem;color:#444" data-key="logi_caco_desc"></p>
+        </div>
+        <div class="logi-box reveal">
+          <h4 style="display:flex;align-items:center;gap:8px"><i class="fas fa-cubes" style="color:var(--gold)"></i> <span data-key="logi_marble_title"></span></h4>
+          <p style="font-size:0.88rem;color:#444" data-key="logi_marble_desc"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="qual-note reveal" style="margin-top:50px" data-key="logi_end"></div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<div id="fab"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared.js"></script>
+<script>EW.sharedInit('logistics');</script>
+</body>
+</html>

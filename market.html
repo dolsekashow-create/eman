@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eman Warsaw | Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="icon" href="logo.png" type="image/png"/>
+</head>
+<body>
+<div id="preloader"><img src="logo.png" alt="" class="loader-logo" onerror="this.style.display='none'"/></div>
+
+<nav class="navbar" id="navbar"></nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1 data-key="market_title"></h1>
+    <div class="line"></div>
+  </div>
+</header>
+
+<section class="section bg-dark">
+  <div class="container">
+    <div class="market-content">
+      <p class="reveal" data-key="market_p1"></p>
+      <p class="reveal" data-key="market_p2"></p>
+      <p class="reveal" data-key="market_p3"></p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<div id="fab"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared.js"></script>
+<script>EW.sharedInit('market');</script>
+</body>
+</html>

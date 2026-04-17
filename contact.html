@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eman Warsaw | Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="icon" href="logo.png" type="image/png"/>
+</head>
+<body>
+<div id="preloader"><img src="logo.png" alt="" class="loader-logo" onerror="this.style.display='none'"/></div>
+
+<nav class="navbar" id="navbar"></nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1 data-key="contact_title"></h1>
+    <div class="line"></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <p class="reveal" data-key="contact_intro" style="max-width:800px;margin:0 auto 48px;text-align:center;font-size:0.95rem;color:#444;line-height:1.9"></p>
+
+    <div class="contact-grid">
+      <div class="contact-text reveal">
+        <h3>Eman Warsaw For Trading sp. z o.o.</h3>
+        <div class="c-item">
+          <div class="c-icon"><i class="fas fa-building"></i></div>
+          <div><h5 data-key="contact_hq"></h5><p id="contactAddress"></p></div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon"><i class="fas fa-envelope"></i></div>
+          <div><h5>E-mail</h5><p id="contactEmail"></p></div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon"><i class="fas fa-phone-alt"></i></div>
+          <div><h5 data-key="contact_phone"></h5><p id="contactPhone"></p></div>
+        </div>
+      </div>
+
+      <div class="contact-form reveal">
+        <h4 data-key="form_title"></h4>
+        <div class="cf-group"><input type="text" id="fName" data-key-ph="form_name" required/></div>
+        <div class="cf-row">
+          <div class="cf-group"><input type="text" id="fCompany" data-key-ph="form_company"/></div>
+          <div class="cf-group"><input type="text" id="fCountry" data-key-ph="form_country"/></div>
+        </div>
+        <div class="cf-row">
+          <div class="cf-group"><input type="email" id="fEmail" data-key-ph="form_email"/></div>
+          <div class="cf-group"><input type="tel" id="fPhone" data-key-ph="form_phone"/></div>
+        </div>
+        <div class="cf-row">
+          <div class="cf-group">
+            <select id="fProduct">
+              <option value="" data-key="form_product"></option>
+              <option value="calcium-carbonate" data-key="form_product_caco"></option>
+              <option value="marble" data-key="form_product_marble"></option>
+              <option value="other" data-key="form_product_other"></option>
+            </select>
+          </div>
+          <div class="cf-group"><input type="text" id="fQuantity" data-key-ph="form_quantity"/></div>
+        </div>
+        <div class="cf-group"><input type="text" id="fSpec" data-key-ph="form_spec"/></div>
+        <div class="cf-group"><textarea id="fMessage" data-key-ph="form_message"></textarea></div>
+        <button class="cf-submit" id="fSubmit" data-key="form_submit"></button>
+        <div class="cf-msg" id="fMsg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<div id="fab"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared.js"></script>
+<script>
+function renderContactInfo() {
+  const c = EW.getContent().contact || {};
+  document.getElementById('contactAddress').textContent = c.address || '';
+  document.getElementById('contactEmail').textContent = c.email || '';
+  document.getElementById('contactPhone').textContent = c.phone || '';
+}
+
+async function submitForm() {
+  const btn = document.getElementById('fSubmit');
+  const msg = document.getElementById('fMsg');
+  msg.className = 'cf-msg'; msg.textContent = '';
+
+  const name = document.getElementById('fName').value.trim();
+  if (!name) {
+    msg.className = 'cf-msg error';
+    msg.textContent = EW.t('form_name');
+    return;
+  }
+  btn.disabled = true;
+  const payload = {
+    name,
+    company: document.getElementById('fCompany').value.trim() || null,
+    country: document.getElementById('fCountry').value.trim() || null,
+    email: document.getElementById('fEmail').value.trim() || null,
+    phone: document.getElementById('fPhone').value.trim() || null,
+    product: document.getElementById('fProduct').value || null,
+    specification: document.getElementById('fSpec').value.trim() || null,
+    quantity: document.getElementById('fQuantity').value.trim() || null,
+    message: document.getElementById('fMessage').value.trim() || null
+  };
+  try {
+    const { error } = await EW.sb.from('contact_messages').insert(payload);
+    if (error) throw error;
+    msg.className = 'cf-msg success';
+    msg.textContent = EW.t('form_success');
+    ['fName','fCompany','fCountry','fEmail','fPhone','fSpec','fQuantity','fMessage'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('fProduct').selectedIndex = 0;
+  } catch(e) {
+    console.error(e);
+    msg.className = 'cf-msg error';
+    msg.textContent = EW.t('form_error');
+  }
+  btn.disabled = false;
+}
+
+window.onReady = () => {
+  renderContactInfo();
+  document.getElementById('fSubmit').addEventListener('click', submitForm);
+};
+window.onLangChange = renderContactInfo;
+EW.sharedInit('contact');
+</script>
+</body>
+</html>

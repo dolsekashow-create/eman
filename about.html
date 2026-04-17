@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eman Warsaw | About Us</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="icon" href="logo.png" type="image/png"/>
+</head>
+<body>
+<div id="preloader"><img src="logo.png" alt="" class="loader-logo" onerror="this.style.display='none'"/></div>
+
+<nav class="navbar" id="navbar"></nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1 data-key="about_title"></h1>
+    <div class="line"></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <div class="about-wrap">
+      <div class="about-text reveal">
+        <h3>Eman Warsaw For Trading sp. z o.o.</h3>
+        <p data-key="about_p1"></p>
+        <p data-key="about_p2"></p>
+        <p data-key="about_p3"></p>
+        <p data-key="about_p4"></p>
+      </div>
+      <div class="about-img reveal">
+        <img id="aboutImg" src="" alt="About"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-off">
+  <div class="container">
+    <div class="vmv-grid">
+      <div class="vmv-card reveal">
+        <i class="fas fa-eye"></i>
+        <h3 data-key="about_vision_title"></h3>
+        <p data-key="about_vision"></p>
+      </div>
+      <div class="vmv-card reveal">
+        <i class="fas fa-bullseye"></i>
+        <h3 data-key="about_mission_title"></h3>
+        <p data-key="about_mission"></p>
+      </div>
+      <div class="vmv-card vmv-values reveal">
+        <i class="fas fa-gem"></i>
+        <h3 data-key="about_values_title"></h3>
+        <ul>
+          <li data-key="about_v1"></li>
+          <li data-key="about_v2"></li>
+          <li data-key="about_v3"></li>
+          <li data-key="about_v4"></li>
+          <li data-key="about_v5"></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<div id="fab"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared.js"></script>
+<script>
+window.onReady = () => {
+  const img = document.getElementById('aboutImg');
+  if (img && EW.getContent().about_image) img.src = EW.getContent().about_image;
+};
+EW.sharedInit('about');
+</script>
+</body>
+</html>

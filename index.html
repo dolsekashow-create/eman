@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eman Warsaw For Trading | Industrial Minerals & Natural Stone</title>
+<meta name="description" content="Polish import-export company. Calcium carbonate and natural marble supply from Egypt to Europe."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="style.css"/>
+<link rel="icon" href="logo.png" type="image/png"/>
+</head>
+<body>
+<div id="preloader"><img src="logo.png" alt="" class="loader-logo" onerror="this.style.display='none'"/></div>
+
+<nav class="navbar" id="navbar"></nav>
+
+<section class="hero" id="hero">
+  <div class="hero-videos" id="heroVideos"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <img src="logo.png" alt="Eman Warsaw" class="hero-logo" onerror="this.style.display='none'"/>
+    <h1 data-key="hero_title"></h1>
+    <p class="hero-sub" data-key="hero_sub"></p>
+    <a href="products.html" class="hero-btn" data-key="hero_btn"></a>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+</section>
+
+<!-- Welcome -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2 data-key="home_welcome_title"></h2>
+      <div class="line"></div>
+    </div>
+    <div class="market-content" style="max-width:820px; color:#444">
+      <p class="reveal" data-key="home_welcome_p1" style="font-size:0.98rem; line-height:1.95; margin-bottom:18px; text-align:center"></p>
+      <p class="reveal" data-key="home_welcome_p2" style="font-size:0.98rem; line-height:1.95; text-align:center"></p>
+    </div>
+  </div>
+</section>
+
+<!-- What we offer -->
+<section class="section bg-off">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2 data-key="home_offer_title"></h2>
+      <div class="line"></div>
+    </div>
+    <div class="offer-list">
+      <div class="offer-item reveal"><i class="fas fa-flask"></i><p data-key="home_offer_1"></p></div>
+      <div class="offer-item reveal"><i class="fas fa-cubes"></i><p data-key="home_offer_2"></p></div>
+      <div class="offer-item reveal"><i class="fas fa-truck"></i><p data-key="home_offer_3"></p></div>
+      <div class="offer-item reveal"><i class="fas fa-file-alt"></i><p data-key="home_offer_4"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Products -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2 data-key="home_products_title"></h2>
+      <div class="line"></div>
+    </div>
+    <div class="products-grid" id="homeProducts"></div>
+
+    <div class="closing-banner reveal" style="margin-top:70px">
+      <p data-key="home_closing"></p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<div id="fab"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared.js"></script>
+<script>
+let vidTimer, vidIdx = 0;
+
+function renderVideos() {
+  const wrap = document.getElementById('heroVideos');
+  const dots = document.getElementById('heroDots');
+  const vids = EW.getContent().videos || [];
+  wrap.innerHTML = ''; dots.innerHTML = '';
+  vids.forEach((src, i) => {
+    const v = document.createElement('video');
+    v.src = src; v.muted = true; v.loop = true; v.playsInline = true;
+    if (i===0) v.classList.add('active');
+    wrap.appendChild(v);
+    const d = document.createElement('span');
+    d.dataset.i = i;
+    if (i===0) d.classList.add('active');
+    d.addEventListener('click', () => showVid(i));
+    dots.appendChild(d);
+  });
+  if (vids.length) { showVid(0); playVids(); }
+}
+
+function showVid(i) {
+  const vids = document.querySelectorAll('.hero-videos video');
+  const dots = document.querySelectorAll('.hero-dots span');
+  vids.forEach((v, idx) => {
+    v.classList.remove('active');
+    if (idx===i) { v.currentTime = 0; v.play().catch(()=>{}); v.classList.add('active'); }
+    else v.pause();
+  });
+  dots.forEach((d, idx) => d.classList.toggle('active', idx===i));
+  vidIdx = i;
+}
+
+function playVids() {
+  const vids = document.querySelectorAll('.hero-videos video');
+  clearInterval(vidTimer);
+  vidTimer = setInterval(() => showVid((vidIdx+1) % vids.length), 7000);
+}
+
+function renderHomeProducts() {
+  const grid = document.getElementById('homeProducts');
+  const prods = EW.getProducts();
+  if (!prods.length) {
+    grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1">...</p>';
+    return;
+  }
+  const cta = EW.t('products_cta');
+  grid.innerHTML = prods.map(p => `
+    <div class="product-card reveal">
+      <img class="pc-image" src="${p.image||''}" alt="" onerror="this.style.display='none'"/>
+      <div class="pc-body">
+        <div class="pc-icon"><i class="${p.icon||'fas fa-cube'}"></i></div>
+        <h3 data-loc='${JSON.stringify(p.name).replace(/'/g,"&apos;")}'>${EW.loc(p.name)}</h3>
+        <p data-loc='${JSON.stringify(p.short_desc).replace(/'/g,"&apos;")}'>${EW.loc(p.short_desc)}</p>
+        <a href="product.html?slug=${encodeURIComponent(p.slug)}" class="pc-cta">${cta}</a>
+      </div>
+    </div>`).join('');
+  // reveal
+  document.querySelectorAll('#homeProducts .reveal').forEach(el => {
+    new IntersectionObserver((entries, o) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); o.unobserve(e.target); }});
+    }, { threshold: 0.1 }).observe(el);
+  });
+}
+
+window.onReady = () => {
+  renderVideos();
+  renderHomeProducts();
+};
+window.onLangChange = () => {
+  renderHomeProducts();
+};
+
+EW.sharedInit('home');
+</script>
+</body>
+</html>
