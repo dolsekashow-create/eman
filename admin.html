@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>لوحة التحكم | Eman Warsaw</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-:root { --gold:#B89B5E; --gold-lt:#D4BC82; --gold-dk:#8C7340; --black:#0E0E0E; --dark:#1a1a1a; --darker:#0a0a0a; --white:#fff; --border:rgba(255,255,255,0.08); --success:#4caf50; --danger:#f44336; --warn:#ff9800; }
+:root {
+  --gold:#B89B5E; --gold-lt:#D4BC82; --gold-dk:#8C7340;
+  --black:#0E0E0E; --dark:#1a1a1a; --darker:#0a0a0a;
+  --white:#fff; --off:#f5f5f5; --border:rgba(255,255,255,0.08);
+  --success:#4caf50; --danger:#f44336; --warn:#ff9800;
+}
 html, body { height:100%; }
-body { font-family:'Cairo',sans-serif; background:var(--darker); color:var(--white); direction:rtl; line-height:1.7; font-size:14px; }
+body {
+  font-family:'Cairo',sans-serif; font-weight:400;
+  background:var(--darker); color:var(--white);
+  direction:rtl; line-height:1.7; font-size:14px;
+}
 button { font-family:inherit; cursor:pointer; border:none; }
 input, textarea, select { font-family:inherit; }
 
@@ -20,26 +29,26 @@ input, textarea, select { font-family:inherit; }
 .login-logo span { display:block; font-weight:300; font-size:0.72rem; letter-spacing:1.5px; color:rgba(255,255,255,0.4); margin-top:4px; }
 .login-box h2 { font-size:1.1rem; font-weight:600; margin-bottom:24px; text-align:center; color:rgba(255,255,255,0.85); }
 .login-box label { display:block; font-size:0.8rem; color:rgba(255,255,255,0.6); margin-bottom:6px; }
-.login-box input { width:100%; padding:11px 14px; background:#0f0f0f; border:1px solid var(--border); color:var(--white); margin-bottom:14px; font-size:0.9rem; }
+.login-box input { width:100%; padding:11px 14px; background:#0f0f0f; border:1px solid var(--border); color:var(--white); margin-bottom:14px; font-size:0.9rem; transition:0.3s; }
 .login-box input:focus { outline:none; border-color:var(--gold); }
-.login-box button { width:100%; padding:12px; background:var(--gold); color:var(--black); font-weight:700; font-size:0.88rem; letter-spacing:1.5px; margin-top:6px; }
+.login-box button { width:100%; padding:12px; background:var(--gold); color:var(--black); font-weight:700; font-size:0.88rem; letter-spacing:1.5px; transition:0.3s; margin-top:6px; }
 .login-box button:hover { background:var(--gold-lt); }
 .login-msg { font-size:0.8rem; color:var(--danger); margin-top:10px; text-align:center; min-height:18px; }
 
 #app { display:none; min-height:100vh; }
 #app.active { display:flex; }
-.sidebar { width:240px; background:var(--dark); border-left:1px solid var(--border); padding:24px 0; display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto; flex-shrink:0; }
+.sidebar { width:240px; background:var(--dark); border-left:1px solid var(--border); padding:24px 0; display:flex; flex-direction:column; height:100vh; position:sticky; top:0; overflow-y:auto; }
 .sidebar-brand { padding:0 24px 20px; border-bottom:1px solid var(--border); margin-bottom:16px; }
 .sidebar-brand h1 { font-size:0.95rem; color:var(--gold); letter-spacing:2px; font-weight:700; }
 .sidebar-brand span { font-size:0.7rem; color:rgba(255,255,255,0.4); letter-spacing:1px; font-weight:300; }
 .sidebar-menu { flex:1; padding:0 12px; }
-.sb-item { display:flex; align-items:center; gap:12px; padding:11px 14px; color:rgba(255,255,255,0.6); font-size:0.88rem; border-radius:6px; cursor:pointer; margin-bottom:3px; font-weight:500; transition:0.2s; }
+.sb-item { display:flex; align-items:center; gap:12px; padding:11px 14px; color:rgba(255,255,255,0.6); font-size:0.88rem; border-radius:6px; cursor:pointer; transition:0.2s; margin-bottom:3px; font-weight:500; }
 .sb-item i { width:18px; text-align:center; font-size:0.95rem; }
 .sb-item:hover { background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.9); }
 .sb-item.active { background:rgba(184,155,94,0.12); color:var(--gold); }
 .sb-item .badge { margin-right:auto; background:var(--gold); color:var(--black); font-size:0.68rem; padding:1px 7px; border-radius:10px; font-weight:700; }
 .sidebar-footer { padding:12px; border-top:1px solid var(--border); }
-.sb-logout { width:100%; padding:9px; background:transparent; color:rgba(255,255,255,0.5); border:1px solid var(--border); font-size:0.8rem; border-radius:6px; }
+.sb-logout { width:100%; padding:9px; background:transparent; color:rgba(255,255,255,0.5); border:1px solid var(--border); font-size:0.8rem; transition:0.2s; border-radius:6px; }
 .sb-logout:hover { color:var(--danger); border-color:var(--danger); }
 
 main { flex:1; overflow-y:auto; height:100vh; }
@@ -48,24 +57,33 @@ main { flex:1; overflow-y:auto; height:100vh; }
 .topbar .status { font-size:0.78rem; color:rgba(255,255,255,0.4); }
 .topbar .status.saving { color:var(--warn); }
 .topbar .status.saved { color:var(--success); }
-.topbar .status.error { color:var(--danger); }
 .content { padding:28px 32px; max-width:1200px; margin:0 auto; padding-bottom:100px; }
+.page { display:none; }
+.page.active { display:block; animation:fadeIn 0.3s; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 .card { background:var(--dark); border:1px solid var(--border); padding:22px; margin-bottom:20px; border-radius:6px; }
 .card h3 { font-size:0.95rem; font-weight:600; margin-bottom:16px; color:var(--gold); padding-bottom:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
 .card h3 small { font-weight:300; color:rgba(255,255,255,0.4); font-size:0.75rem; margin-right:auto; }
 
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px; }
+.form-row.single { grid-template-columns:1fr; }
 .form-row.quad { grid-template-columns:repeat(4,1fr); }
 .field { margin-bottom:14px; }
 .field label { display:block; font-size:0.8rem; color:rgba(255,255,255,0.65); margin-bottom:6px; font-weight:500; }
 .field label small { color:rgba(255,255,255,0.35); font-weight:400; margin-right:6px; }
-.field input, .field textarea, .field select { width:100%; padding:10px 12px; background:#0f0f0f; border:1px solid var(--border); color:var(--white); font-size:0.88rem; border-radius:4px; font-family:'Cairo', sans-serif; }
+.field input, .field textarea, .field select { width:100%; padding:10px 12px; background:#0f0f0f; border:1px solid var(--border); color:var(--white); font-size:0.88rem; transition:0.2s; border-radius:4px; font-family:'Cairo', sans-serif; }
 .field input:focus, .field textarea:focus, .field select:focus { outline:none; border-color:var(--gold); }
 .field textarea { min-height:80px; resize:vertical; line-height:1.7; }
 .field.lang-ltr input, .field.lang-ltr textarea { direction:ltr; text-align:left; }
 
-.btn { padding:10px 22px; background:var(--gold); color:var(--black); font-weight:700; font-size:0.82rem; letter-spacing:1px; border-radius:4px; transition:0.2s; }
+.lang-tabs { display:flex; gap:4px; margin-bottom:10px; flex-wrap:wrap; }
+.lang-tabs button { padding:5px 12px; background:transparent; color:rgba(255,255,255,0.5); border:1px solid var(--border); font-size:0.75rem; border-radius:4px; transition:0.2s; }
+.lang-tabs button.active { color:var(--gold); border-color:var(--gold); background:rgba(184,155,94,0.08); }
+.lang-pane { display:none; }
+.lang-pane.active { display:block; }
+
+.btn { padding:10px 22px; background:var(--gold); color:var(--black); font-weight:700; font-size:0.82rem; letter-spacing:1px; transition:0.2s; border-radius:4px; }
 .btn:hover { background:var(--gold-lt); }
 .btn.secondary { background:transparent; color:var(--gold); border:1px solid var(--gold); }
 .btn.secondary:hover { background:var(--gold); color:var(--black); }
@@ -73,27 +91,28 @@ main { flex:1; overflow-y:auto; height:100vh; }
 .btn.danger:hover { background:#d32f2f; }
 .btn.small { padding:7px 14px; font-size:0.75rem; }
 
-.save-bar { position:fixed; bottom:0; right:0; left:240px; padding:14px 32px; background:var(--dark); border-top:1px solid var(--border); z-index:50; display:flex; justify-content:space-between; align-items:center; transform:translateY(100%); transition:0.3s; box-shadow:0 -10px 40px rgba(0,0,0,0.3); }
+.save-bar { position:fixed; bottom:0; left:0; right:0; padding:14px 32px; background:var(--dark); border-top:1px solid var(--border); z-index:50; display:flex; justify-content:space-between; align-items:center; transform:translateY(100%); transition:0.3s; box-shadow:0 -10px 40px rgba(0,0,0,0.3); }
 .save-bar.show { transform:translateY(0); }
 .save-bar .info { font-size:0.85rem; color:var(--warn); }
 .save-bar .actions { display:flex; gap:10px; }
 
 .item-list { display:flex; flex-direction:column; gap:10px; }
-.dyn-item { background:#0f0f0f; padding:16px; border:1px solid var(--border); border-radius:4px; }
+.dyn-item { background:#0f0f0f; padding:16px; border:1px solid var(--border); border-radius:4px; position:relative; }
 .dyn-item-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--border); }
 .dyn-item-head .num { color:var(--gold); font-weight:600; font-size:0.85rem; }
 .dyn-item-head .actions { display:flex; gap:6px; }
-.icon-btn { background:transparent; color:rgba(255,255,255,0.4); padding:4px 8px; font-size:0.85rem; border-radius:3px; }
+.icon-btn { background:transparent; color:rgba(255,255,255,0.4); padding:4px 8px; font-size:0.85rem; border-radius:3px; transition:0.2s; }
 .icon-btn:hover { background:rgba(255,255,255,0.08); color:var(--white); }
 .icon-btn.del:hover { color:var(--danger); }
+.icon-btn.up:hover, .icon-btn.down:hover { color:var(--gold); }
 
-.add-btn { padding:10px; background:transparent; color:var(--gold); border:1px dashed var(--gold); width:100%; margin-top:12px; font-size:0.82rem; border-radius:4px; }
+.add-btn { padding:10px; background:transparent; color:var(--gold); border:1px dashed var(--gold); width:100%; margin-top:12px; font-size:0.82rem; transition:0.2s; border-radius:4px; }
 .add-btn:hover { background:rgba(184,155,94,0.08); }
 
 .msg-filters { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
-.msg-filters button { padding:6px 14px; background:transparent; color:rgba(255,255,255,0.6); border:1px solid var(--border); font-size:0.78rem; border-radius:4px; }
+.msg-filters button { padding:6px 14px; background:transparent; color:rgba(255,255,255,0.6); border:1px solid var(--border); font-size:0.78rem; border-radius:4px; transition:0.2s; }
 .msg-filters button.active { border-color:var(--gold); color:var(--gold); background:rgba(184,155,94,0.08); }
-.msg-item { background:#0f0f0f; padding:16px 18px; margin-bottom:10px; border:1px solid var(--border); border-right:3px solid var(--gold); border-radius:4px; }
+.msg-item { background:#0f0f0f; padding:16px 18px; margin-bottom:10px; border:1px solid var(--border); border-right:3px solid var(--gold); border-radius:4px; transition:0.2s; }
 .msg-item.read { opacity:0.6; border-right-color:var(--border); }
 .msg-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px; }
 .msg-head .name { font-weight:700; color:var(--white); font-size:0.95rem; }
@@ -101,7 +120,7 @@ main { flex:1; overflow-y:auto; height:100vh; }
 .msg-info { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:8px; font-size:0.8rem; color:rgba(255,255,255,0.55); }
 .msg-info span i { margin-left:5px; color:var(--gold); }
 .msg-body { font-size:0.86rem; color:rgba(255,255,255,0.75); line-height:1.8; padding-top:8px; border-top:1px dashed var(--border); white-space:pre-wrap; }
-.msg-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.msg-actions { display:flex; gap:6px; margin-top:10px; }
 .empty { text-align:center; padding:48px 20px; color:rgba(255,255,255,0.4); font-size:0.88rem; }
 .empty i { font-size:2rem; color:rgba(255,255,255,0.2); margin-bottom:12px; display:block; }
 
@@ -111,37 +130,6 @@ main { flex:1; overflow-y:auto; height:100vh; }
 .toast.show { opacity:1; transform:translateY(0); }
 .toast.error { border-left-color:var(--danger); }
 
-.product-card-admin { background:#0f0f0f; border:1px solid var(--border); border-radius:6px; padding:18px; display:flex; gap:16px; align-items:center; margin-bottom:12px; }
-.product-card-admin img { width:80px; height:80px; object-fit:cover; border-radius:4px; flex-shrink:0; background:#222; }
-.product-card-admin .pc-info { flex:1; }
-.product-card-admin .pc-info h4 { color:var(--white); font-size:1rem; margin-bottom:4px; }
-.product-card-admin .pc-info p { color:rgba(255,255,255,0.5); font-size:0.82rem; margin-bottom:6px; }
-.product-card-admin .pc-info .meta { color:var(--gold); font-size:0.72rem; font-weight:600; letter-spacing:1px; }
-.product-card-admin .pc-actions { display:flex; gap:6px; flex-direction:column; }
-.pill { display:inline-block; padding:3px 10px; font-size:0.68rem; font-weight:600; letter-spacing:0.5px; border-radius:10px; background:rgba(184,155,94,0.15); color:var(--gold); margin-right:6px; }
-.pill.off { background:rgba(244,67,54,0.15); color:var(--danger); }
-
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:200; display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:40px 20px; }
-.modal-overlay.show { display:flex; }
-.modal { background:var(--dark); border:1px solid var(--border); border-radius:8px; width:100%; max-width:900px; }
-.modal-head { padding:18px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:var(--dark); z-index:5; }
-.modal-head h3 { font-size:1.05rem; color:var(--gold); }
-.modal-head .close { background:transparent; color:rgba(255,255,255,0.5); font-size:1.3rem; padding:4px 12px; }
-.modal-head .close:hover { color:var(--danger); }
-.modal-body { padding:24px; }
-.modal-foot { padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:space-between; gap:10px; position:sticky; bottom:0; background:var(--dark); flex-wrap:wrap; }
-
-.sec-editor { background:#0a0a0a; padding:14px; border:1px solid var(--border); border-radius:4px; margin-bottom:10px; }
-.sec-editor-head { display:flex; gap:8px; margin-bottom:10px; align-items:center; }
-.sec-editor-head select { width:auto; min-width:110px; }
-.sec-editor-head .num { color:var(--gold); font-size:0.8rem; font-weight:600; margin-left:auto; }
-
-.lang-tabs { display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap; }
-.lang-tabs button { padding:5px 12px; background:transparent; color:rgba(255,255,255,0.5); border:1px solid var(--border); font-size:0.73rem; border-radius:4px; }
-.lang-tabs button.active { color:var(--gold); border-color:var(--gold); background:rgba(184,155,94,0.08); }
-.lang-pane { display:none; }
-.lang-pane.active { display:block; }
-
 .menu-toggle { display:none; background:transparent; color:var(--white); font-size:1.3rem; margin-left:10px; }
 @media(max-width:900px) {
   .sidebar { position:fixed; right:-260px; top:0; height:100vh; transition:right 0.3s; z-index:100; }
@@ -150,8 +138,23 @@ main { flex:1; overflow-y:auto; height:100vh; }
   .menu-toggle { display:inline-flex; }
   .content { padding:20px 18px; padding-bottom:100px; }
   .form-row, .form-row.quad { grid-template-columns:1fr; }
-  .save-bar { left:0; }
 }
+
+/* Modal */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:0.2s; }
+.modal-overlay.show { opacity:1; visibility:visible; }
+.modal { background:var(--dark); width:90%; max-width:700px; border:1px solid var(--border); border-radius:8px; padding:24px; max-height:90vh; overflow-y:auto; }
+.modal h3 { color:var(--gold); margin-bottom:20px; font-size:1.1rem; }
+.modal-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:24px; }
+.close-modal { background:transparent; border:none; color:rgba(255,255,255,0.5); font-size:1.2rem; cursor:pointer; float:left; }
+
+.table-wrapper { overflow-x:auto; }
+.products-table { width:100%; border-collapse:collapse; margin-top:10px; }
+.products-table th { text-align:right; padding:12px 8px; border-bottom:1px solid var(--border); color:var(--gold); font-weight:600; font-size:0.8rem; }
+.products-table td { padding:12px 8px; border-bottom:1px solid var(--border); font-size:0.85rem; }
+.products-table td img { max-width:40px; max-height:40px; object-fit:cover; border-radius:4px; }
+.products-table .actions { display:flex; gap:6px; }
+.bulk-actions { margin:20px 0; display:flex; gap:12px; }
 </style>
 </head>
 <body>
@@ -161,9 +164,9 @@ main { flex:1; overflow-y:auto; height:100vh; }
     <div class="login-logo">EMAN WARSAW<span>لوحة التحكم</span></div>
     <h2>تسجيل الدخول</h2>
     <label>اسم المستخدم</label>
-    <input type="text" id="inpUser" autocomplete="username"/>
+    <input type="text" id="inpUser" autocomplete="username" />
     <label>كلمة المرور</label>
-    <input type="password" id="inpPass" autocomplete="current-password"/>
+    <input type="password" id="inpPass" autocomplete="current-password" />
     <button id="btnLogin">دخول</button>
     <div class="login-msg" id="loginMsg"></div>
   </div>
@@ -178,13 +181,15 @@ main { flex:1; overflow-y:auto; height:100vh; }
     <div class="sidebar-menu">
       <div class="sb-item active" data-page="hero"><i class="fas fa-play-circle"></i> الرئيسية والفيديوهات</div>
       <div class="sb-item" data-page="about"><i class="fas fa-info-circle"></i> من نحن</div>
-      <div class="sb-item" data-page="products"><i class="fas fa-cubes"></i> المنتجات</div>
+      <div class="sb-item" data-page="product"><i class="fas fa-cube"></i> المنتج والمواصفات</div>
+      <div class="sb-item" data-page="apps"><i class="fas fa-industry"></i> الاستخدامات الصناعية</div>
+      <div class="sb-item" data-page="why"><i class="fas fa-star"></i> لماذا نحن</div>
       <div class="sb-item" data-page="logistics"><i class="fas fa-truck"></i> اللوجستيات</div>
       <div class="sb-item" data-page="quality"><i class="fas fa-certificate"></i> الجودة والمستندات</div>
       <div class="sb-item" data-page="market"><i class="fas fa-globe"></i> السوق الأوروبي</div>
-      <div class="sb-item" data-page="contact"><i class="fas fa-phone"></i> التواصل والفورم</div>
+      <div class="sb-item" data-page="contact"><i class="fas fa-phone"></i> بيانات الاتصال</div>
       <div class="sb-item" data-page="messages"><i class="fas fa-envelope"></i> الرسائل <span class="badge" id="msgBadge" style="display:none">0</span></div>
-      <div class="sb-item" data-page="navbar"><i class="fas fa-bars"></i> القائمة والفوتر</div>
+      <div class="sb-item" data-page="products"><i class="fas fa-box"></i> المنتجات <span class="badge" id="productsBadge" style="display:none">0</span></div>
       <div class="sb-item" data-page="settings"><i class="fas fa-cog"></i> الإعدادات والأمان</div>
     </div>
     <div class="sidebar-footer">
@@ -200,32 +205,48 @@ main { flex:1; overflow-y:auto; height:100vh; }
       </div>
       <div class="status" id="status">جاهز</div>
     </div>
-    <div class="content" id="content"></div>
+    <div class="content" id="content">
+      <!-- المحتوى يتولد ديناميكيًا -->
+    </div>
   </main>
 </div>
 
-<div class="save-bar" id="saveBar">
-  <div class="info"><i class="fas fa-exclamation-circle"></i> في تعديلات مش محفوظة على نصوص الموقع</div>
-  <div class="actions">
-    <button class="btn secondary" id="btnDiscard">إلغاء</button>
-    <button class="btn" id="btnSave"><i class="fas fa-save"></i> حفظ</button>
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <button class="close-modal" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+    <h3><i class="fas fa-edit"></i> تعديل المنتج</h3>
+    <form id="editProductForm">
+      <input type="hidden" id="editProductId" />
+      <div class="form-row">
+        <div class="field lang-ltr"><label>Slug (معرف فريد)</label><input type="text" id="editSlug" required /></div>
+        <div class="field"><label>الأيقونة <small>مثال: fas fa-cube</small></label><input type="text" id="editIcon" /></div>
+      </div>
+      <div class="field lang-ltr"><label>صورة المنتج (رابط)</label><input type="text" id="editImage" /></div>
+      <div class="field"><label>الاسم (عربي)</label><input type="text" id="editNameAr" required /></div>
+      <div class="field"><label>الاسم (إنجليزي)</label><input type="text" id="editNameEn" required /></div>
+      <div class="field"><label>الاسم (بولندي)</label><input type="text" id="editNamePl" /></div>
+      <div class="field"><label>الاسم (ألماني)</label><input type="text" id="editNameDe" /></div>
+      <div class="field"><label>وصف مختصر (عربي)</label><textarea id="editShortAr" rows="2"></textarea></div>
+      <div class="field"><label>وصف مختصر (إنجليزي)</label><textarea id="editShortEn" rows="2"></textarea></div>
+      <div class="field"><label>وصف مختصر (بولندي)</label><textarea id="editShortPl" rows="2"></textarea></div>
+      <div class="field"><label>وصف مختصر (ألماني)</label><textarea id="editShortDe" rows="2"></textarea></div>
+      <div class="field"><label>وصف كامل (عربي)</label><textarea id="editDescAr" rows="4"></textarea></div>
+      <div class="field"><label>وصف كامل (إنجليزي)</label><textarea id="editDescEn" rows="4"></textarea></div>
+      <div class="field"><label>وصف كامل (بولندي)</label><textarea id="editDescPl" rows="4"></textarea></div>
+      <div class="field"><label>وصف كامل (ألماني)</label><textarea id="editDescDe" rows="4"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" onclick="closeEditModal()">إلغاء</button>
+        <button type="submit" class="btn"><i class="fas fa-save"></i> حفظ</button>
+      </div>
+    </form>
   </div>
 </div>
 
-<div class="modal-overlay" id="productModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3 id="modalTitle">إضافة منتج</h3>
-      <button class="close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="modal-body" id="modalBody"></div>
-    <div class="modal-foot">
-      <button class="btn danger" id="btnDeleteProduct" style="display:none"><i class="fas fa-trash"></i> حذف المنتج</button>
-      <div style="display:flex;gap:8px;margin-right:auto">
-        <button class="btn secondary" onclick="closeProductModal()">إلغاء</button>
-        <button class="btn" id="btnSaveProduct"><i class="fas fa-save"></i> حفظ المنتج</button>
-      </div>
-    </div>
+<div class="save-bar" id="saveBar">
+  <div class="info"><i class="fas fa-exclamation-circle"></i> في تعديلات مش محفوظة</div>
+  <div class="actions">
+    <button class="btn secondary" id="btnDiscard">إلغاء التعديلات</button>
+    <button class="btn" id="btnSave"><i class="fas fa-save"></i> حفظ التغييرات</button>
   </div>
 </div>
 
@@ -240,15 +261,9 @@ const SUPABASE_URL = 'https://mffpfxglevnwzyanbexr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_lPa98YbCXdXpGJxitr7nNQ_EC0q_71g';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let CONTENT = {};
-let ORIGINAL = '';
-let PRODUCTS = [];
-let CURRENT_PAGE = 'hero';
-let MESSAGES = [];
-let MSG_FILTER = 'all';
-let CURRENT_USER = null;
-let EDITING_PRODUCT = null;
-
+/* ============================================================
+   الإعدادات والثوابت
+============================================================ */
 const LANGS = [
   { code:'pl', name:'🇵🇱 بولندي' },
   { code:'en', name:'🇬🇧 إنجليزي' },
@@ -256,33 +271,166 @@ const LANGS = [
   { code:'ar', name:'🇪🇬 عربي' }
 ];
 
-const PAGE_TITLES = {
-  hero:'الرئيسية والفيديوهات', about:'من نحن', products:'المنتجات',
-  logistics:'اللوجستيات', quality:'الجودة والمستندات',
-  market:'السوق الأوروبي', contact:'التواصل والفورم',
-  messages:'الرسائل', navbar:'القائمة والفوتر', settings:'الإعدادات والأمان'
+const TRANSLATION_KEYS = [
+  ['nav_about','من نحن'],['nav_product','المنتج'],['nav_applications','الاستخدامات'],
+  ['nav_why','لماذا نحن'],['nav_logistics','اللوجستيات'],['nav_quality','الجودة'],['nav_contact','تواصل معنا'],
+  ['hero_title','العنوان الرئيسي',true],['hero_sub','الوصف التحت العنوان',true],['hero_btn','نص الزر'],
+  ['about_title','عنوان قسم من نحن'],['about_heading','العنوان الفرعي'],
+  ['about_p1','الفقرة الأولى',true],['about_p2','الفقرة الثانية',true],
+  ['about_p3','الفقرة الثالثة',true],['about_p4','الفقرة الرابعة',true],
+  ['product_title','عنوان قسم المنتج'],['product_sub','الوصف التحت العنوان'],
+  ['product_intro','المقدمة',true],['product_note','الملاحظة الأخيرة',true],
+  ['apps_title','عنوان قسم الاستخدامات'],['apps_footer','التذييل',true],
+  ['why_title','عنوان قسم لماذا نحن'],['why_sub','الوصف التحت العنوان',true],
+  ['logi_title','عنوان قسم اللوجستيات'],['logi_stages_title','عنوان "مراحل التوريد"'],
+  ['logi_pack_title','عنوان "التعبئة"'],['logi_docs_title','عنوان "المستندات"'],
+  ['qual_title','عنوان قسم الجودة'],['qual_intro','المقدمة',true],
+  ['qual_params_title','عنوان "معايير الجودة"'],['qual_docs_title','عنوان "المستندات المتاحة"'],
+  ['qual_note','الملاحظة الأخيرة',true],
+  ['market_title','عنوان قسم السوق'],['market_p1','الفقرة الأولى',true],
+  ['market_p2','الفقرة الثانية',true],['market_p3','الفقرة الثالثة',true],
+  ['contact_title','عنوان قسم الاتصال'],['contact_heading','العنوان الفرعي'],
+  ['contact_p','فقرة تعريفية',true],['contact_hq','كلمة "المقر"'],['contact_phone','كلمة "الهاتف / واتساب"'],
+  ['form_title','عنوان الفورم'],['form_name','placeholder الاسم'],['form_email','placeholder الإيميل'],
+  ['form_phone','placeholder الهاتف'],['form_company','placeholder الشركة'],['form_message','placeholder الرسالة'],
+  ['form_submit','زر الإرسال'],['form_success','رسالة النجاح'],['form_error','رسالة الخطأ'],
+  ['footer_rights','"جميع الحقوق محفوظة"'],['fab_call','زر اتصل العائم']
+];
+
+const DEFAULT_CONTENT = {
+  videos: [
+    "https://videos.pexels.com/video-files/3214448/3214448-uhd_3840_2160_25fps.mp4",
+    "https://videos.pexels.com/video-files/3195394/3195394-uhd_3840_2160_25fps.mp4",
+    "https://videos.pexels.com/video-files/3129671/3129671-uhd_3840_2160_25fps.mp4"
+  ],
+  about_image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
+  contact: { address:"Eman Warsaw For Trading sp. z o.o., Warszawa, Polska", email:"info@emanwarsaw.com", phone:"+48 123 456 789", whatsapp:"48123456789", facebook:"https://facebook.com/emanwarsaw" },
+  brand: { name:"EMAN WARSAW", subname:"For Trading sp. z o.o." },
+  translations: {
+    pl: { nav_about:"O nas", nav_product:"Produkt", nav_applications:"Zastosowania", nav_why:"Dlaczego my", nav_logistics:"Logistyka", nav_quality:"Jakość", nav_contact:"Kontakt", hero_title:"Węglan Wapnia<br><span class='gold'>Profesjonalne Rozwiązania Dostaw</span>", hero_sub:"Polska firma importowo-eksportowa z egipskim zarządzaniem.", hero_btn:"Dowiedz się więcej", about_title:"O nas", about_heading:"Eman Warsaw For Trading sp. z o.o.", about_p1:"Firma została założona w Polsce.", about_p2:"Wyróżnia się profesjonalną tożsamością.", about_p3:"Powiązana z firmą siostrzaną w Egipcie.", about_p4:"Wiarygodne ogniwo łączące Egipt i Europę.", product_title:"Węglan Wapnia", product_sub:"CaCO₃ najwyższej jakości.", product_intro:"Węglan wapnia jest podstawowym surowcem.", product_note:"Przydatność zależy od specyfikacji.", apps_title:"Zastosowania Przemysłowe", apps_footer:"Szeroki zakres zastosowań.", why_title:"Dlaczego my", why_sub:"Nie tylko cena — zrozumienie i zaangażowanie.", logi_title:"Logistyka i Łańcuch Dostaw", logi_stages_title:"Etapy koordynacji dostaw", logi_pack_title:"Pakowanie", logi_docs_title:"Dokumentacja", qual_title:"Jakość i Dokumentacja", qual_intro:"Zaufanie buduje się na przejrzystości.", qual_params_title:"Parametry jakościowe", qual_docs_title:"Dokumenty na życzenie", qual_note:"Zastosowania specjalistyczne wymagają odpowiedniej klasy.", market_title:"Rynek Polski i Europejski", market_p1:"Działamy z Polski.", market_p2:"Obecność w Polsce to przewaga.", market_p3:"Praktyczny partner dla firm.", contact_title:"Kontakt", contact_heading:"Eman Warsaw For Trading sp. z o.o.", contact_p:"Chętnie nawiążemy kontakt.", contact_hq:"Siedziba", contact_phone:"Telefon / WhatsApp", form_title:"Wyślij zapytanie", form_name:"Imię i nazwisko *", form_email:"Email", form_phone:"Telefon", form_company:"Firma", form_message:"Wiadomość", form_submit:"Wyślij", form_success:"Dziękujemy!", form_error:"Wystąpił błąd.", footer_rights:"Wszelkie prawa zastrzeżone.", fab_call:"Zadzwoń" },
+    en: { nav_about:"About", nav_product:"Product", nav_applications:"Applications", nav_why:"Why Us", nav_logistics:"Logistics", nav_quality:"Quality", nav_contact:"Contact", hero_title:"Calcium Carbonate<br><span class='gold'>Professional Supply Solutions</span>", hero_sub:"A Polish import-export company with Egyptian management.", hero_btn:"Learn More", about_title:"About Us", about_heading:"Eman Warsaw For Trading sp. z o.o.", about_p1:"Established in Poland as a flexible European trading platform.", about_p2:"Distinguished by professional identity.", about_p3:"Linked to a sister company in Egypt.", about_p4:"A reliable link between Egypt and Europe.", product_title:"Calcium Carbonate", product_sub:"High-quality CaCO₃.", product_intro:"Calcium carbonate is a fundamental raw material.", product_note:"Suitability depends on specification.", apps_title:"Industrial Applications", apps_footer:"Wide range of applications.", why_title:"Why Us", why_sub:"Not just price — understanding and commitment.", logi_title:"Logistics & Supply Chain", logi_stages_title:"Supply Coordination Stages", logi_pack_title:"Packaging", logi_docs_title:"Documentation", qual_title:"Quality & Documentation", qual_intro:"Trust is built on transparency and precision.", qual_params_title:"Quality Parameters", qual_docs_title:"Documents on Request", qual_note:"Specialized applications require proper grade.", market_title:"Polish & European Market", market_p1:"We operate from Poland.", market_p2:"Presence in Poland is advantageous.", market_p3:"A practical partner for companies.", contact_title:"Contact Us", contact_heading:"Eman Warsaw For Trading sp. z o.o.", contact_p:"We look forward to discussing your needs.", contact_hq:"Headquarters", contact_phone:"Phone / WhatsApp", form_title:"Send an Inquiry", form_name:"Full Name *", form_email:"Email", form_phone:"Phone", form_company:"Company", form_message:"Message", form_submit:"Send", form_success:"Thank you!", form_error:"An error occurred.", footer_rights:"All rights reserved.", fab_call:"Call" },
+    de: { nav_about:"Über uns", nav_product:"Produkt", nav_applications:"Anwendungen", nav_why:"Warum wir", nav_logistics:"Logistik", nav_quality:"Qualität", nav_contact:"Kontakt", hero_title:"Calciumcarbonat<br><span class='gold'>Professionelle Lieferlösungen</span>", hero_sub:"Ein polnisches Import-Export-Unternehmen.", hero_btn:"Mehr erfahren", about_title:"Über uns", about_heading:"Eman Warsaw For Trading sp. z o.o.", about_p1:"In Polen als Handelsplattform gegründet.", about_p2:"Durch professionelle Identität ausgezeichnet.", about_p3:"Mit Schwesterunternehmen in Ägypten verbunden.", about_p4:"Zuverlässiges Bindeglied zwischen Ägypten und Europa.", product_title:"Calciumcarbonat", product_sub:"Hochreines CaCO₃.", product_intro:"Calciumcarbonat ist ein Grundrohstoff.", product_note:"Eignung hängt von Spezifikation ab.", apps_title:"Industrielle Anwendungen", apps_footer:"Breites Spektrum von Anwendungen.", why_title:"Warum wir", why_sub:"Nicht nur Preis — Verständnis und Engagement.", logi_title:"Logistik & Lieferkette", logi_stages_title:"Lieferkoordinationsphasen", logi_pack_title:"Verpackung", logi_docs_title:"Dokumentation", qual_title:"Qualität & Dokumentation", qual_intro:"Vertrauen auf Transparenz.", qual_params_title:"Qualitätsparameter", qual_docs_title:"Dokumente auf Anfrage", qual_note:"Spezialisierte Anwendungen erfordern richtige Qualität.", market_title:"Polnischer & Europäischer Markt", market_p1:"Wir arbeiten von Polen aus.", market_p2:"Präsenz in Polen ist Vorteil.", market_p3:"Praktischer Partner.", contact_title:"Kontakt", contact_heading:"Eman Warsaw For Trading sp. z o.o.", contact_p:"Wir freuen uns auf Kontakt.", contact_hq:"Sitz", contact_phone:"Telefon / WhatsApp", form_title:"Anfrage senden", form_name:"Vollständiger Name *", form_email:"E-Mail", form_phone:"Telefon", form_company:"Firma", form_message:"Nachricht", form_submit:"Senden", form_success:"Vielen Dank!", form_error:"Fehler aufgetreten.", footer_rights:"Alle Rechte vorbehalten.", fab_call:"Anrufen" },
+    ar: { nav_about:"من نحن", nav_product:"المنتج", nav_applications:"الاستخدامات", nav_why:"لماذا نحن", nav_logistics:"اللوجستيات", nav_quality:"الجودة", nav_contact:"تواصل معنا", hero_title:"كربونات الكالسيوم<br><span class='gold'>حلول توريد احترافية</span>", hero_sub:"شركة بولندية للاستيراد والتصدير بإدارة مصرية.", hero_btn:"اعرف المزيد", about_title:"من نحن", about_heading:"Eman Warsaw For Trading sp. z o.o.", about_p1:"تأسست في بولندا كمنصة تجارية أوروبية.", about_p2:"تمتاز بهوية مهنية.", about_p3:"يرتبط نشاطنا بشركة شقيقة في مصر.", about_p4:"حلقة وصل موثوقة بين مصر وأوروبا.", product_title:"كربونات الكالسيوم", product_sub:"CaCO₃ عالي الجودة.", product_intro:"كربونات الكالسيوم من المواد الخام الأساسية.", product_note:"ملاءمة المنتج تعتمد على المواصفة المطلوبة.", apps_title:"الاستخدامات الصناعية", apps_footer:"اتساع نطاق الاستخدام يتطلب اختيار الدرجة المناسبة.", why_title:"لماذا نحن", why_sub:"ليس فقط السعر، بل الفهم والالتزام.", logi_title:"اللوجستيات وسلسلة الإمداد", logi_stages_title:"مراحل تنسيق التوريد", logi_pack_title:"التعبئة", logi_docs_title:"المستندات", qual_title:"الجودة والمستندات", qual_intro:"الثقة تُبنى على الوضوح والدقة.", qual_params_title:"معايير الجودة", qual_docs_title:"المستندات المتاحة", qual_note:"الاستخدامات المتخصصة تتطلب درجة مناسبة.", market_title:"السوق البولندي والأوروبي", market_p1:"نعمل من بولندا.", market_p2:"وجودنا في بولندا ميزة.", market_p3:"نهدف أن نكون شريكًا عمليًا.", contact_title:"تواصل معنا", contact_heading:"Eman Warsaw For Trading sp. z o.o.", contact_p:"يسعدنا التواصل معكم.", contact_hq:"المقر", contact_phone:"الهاتف / واتساب", form_title:"أرسل استفسارك", form_name:"الاسم بالكامل *", form_email:"البريد الإلكتروني", form_phone:"الهاتف", form_company:"الشركة", form_message:"الرسالة", form_submit:"إرسال", form_success:"شكرًا لك!", form_error:"حدث خطأ.", footer_rights:"جميع الحقوق محفوظة.", fab_call:"اتصل" }
+  },
+  specs: [
+    { icon:"fas fa-compress-arrows-alt", title:{pl:"Rozdrobnienie",en:"Fineness",de:"Feinheit",ar:"النعومة"}, desc:{pl:"Różne frakcje",en:"Various fractions",de:"Verschiedene Fraktionen",ar:"فراكسيونات مختلفة"} },
+    { icon:"fas fa-gem", title:{pl:"Czystość",en:"Purity",de:"Reinheit",ar:"النقاوة"}, desc:{pl:"Wysoka zawartość",en:"High content",de:"Hoher Gehalt",ar:"محتوى عالي"} },
+    { icon:"fas fa-sun", title:{pl:"Białość",en:"Whiteness",de:"Weißgrad",ar:"البياض"}, desc:{pl:"Precyzyjne parametry",en:"Precise parameters",de:"Präzise Parameter",ar:"معايير دقيقة"} },
+    { icon:"fas fa-tint", title:{pl:"Wilgotność",en:"Moisture",de:"Feuchtigkeit",ar:"الرطوبة"}, desc:{pl:"Kontrolowana",en:"Controlled",de:"Kontrolliert",ar:"محتوى مُتحكم فيه"} },
+    { icon:"fas fa-box", title:{pl:"Pakowanie",en:"Packaging",de:"Verpackung",ar:"التعبئة"}, desc:{pl:"25 kg, Jumbo Bags",en:"25 kg, Jumbo Bags",de:"25 kg, Jumbo Bags",ar:"25 كجم، أكياس جامبو"} },
+    { icon:"fas fa-industry", title:{pl:"Zastosowanie",en:"Application",de:"Anwendung",ar:"الاستخدام"}, desc:{pl:"Wg końcowego użycia",en:"Per end-use",de:"Je nach Anwendung",ar:"حسب الاستخدام النهائي"} }
+  ],
+  applications: [
+    { title:{pl:"Tworzywa i Masterbatch",en:"Plastics & Masterbatch",de:"Kunststoffe",ar:"البلاستيك والمسترباتش"}, desc:{pl:"Stosowany w PVC, PE, PP.",en:"Used in PVC, PE, PP.",de:"In PVC, PE, PP.",ar:"تُستخدم في PVC وPE وPP."} },
+    { title:{pl:"Farby i powłoki",en:"Paints & Coatings",de:"Farben",ar:"الدهانات والطلاءات"}, desc:{pl:"Formulacje farb.",en:"Paint formulations.",de:"Farbformulierungen.",ar:"تدخل في تركيبات الدهانات."} },
+    { title:{pl:"Papier i karton",en:"Paper & Cardboard",de:"Papier",ar:"الورق والكرتون"}, desc:{pl:"Poprawia jasność.",en:"Improves brightness.",de:"Verbessert Helligkeit.",ar:"تُحسّن السطوع والنعومة."} },
+    { title:{pl:"Guma",en:"Rubber",de:"Gummi",ar:"المطاط"}, desc:{pl:"Mieszanki gumowe.",en:"Rubber compounds.",de:"Gummimischungen.",ar:"تدخل في مركبات المطاط."} },
+    { title:{pl:"Kleje i uszczelniacze",en:"Adhesives & Sealants",de:"Klebstoffe",ar:"المواد اللاصقة"}, desc:{pl:"Formulacje klejów.",en:"Adhesive formulations.",de:"Klebstoffformulierungen.",ar:"تركيبات المواد اللاصقة."} },
+    { title:{pl:"Materiały budowlane",en:"Building Materials",de:"Baumaterialien",ar:"مواد البناء"}, desc:{pl:"Aplikacje budowlane.",en:"Construction applications.",de:"Bauanwendungen.",ar:"تستخدم في تطبيقات البناء."} },
+    { title:{pl:"Cegła biała",en:"White Brick",de:"Kalksandstein",ar:"الطوب الأبيض"}, desc:{pl:"Produkcja cegły białej.",en:"White brick production.",de:"Kalksandsteinherstellung.",ar:"تدخل في تطبيقات الطوب الأبيض."} },
+    { title:{pl:"Pasze i drób",en:"Feed & Poultry",de:"Futtermittel",ar:"الأعلاف والدواجن"}, desc:{pl:"Źródło wapnia.",en:"Calcium source.",de:"Calciumquelle.",ar:"مصدر معدني للكالسيوم."} },
+    { title:{pl:"Farmacja i żywność",en:"Pharma & Food",de:"Pharma",ar:"الصناعات الدوائية"}, desc:{pl:"Wysoka czystość.",en:"High purity.",de:"Hochrein.",ar:"درجات عالية النقاوة."} },
+    { title:{pl:"Pielęgnacja",en:"Personal Care",de:"Körperpflege",ar:"العناية الشخصية"}, desc:{pl:"Klasy pielęgnacyjne.",en:"Personal care grades.",de:"Pflegequalitäten.",ar:"درجات للعناية الشخصية."} }
+  ],
+  why_cards: [
+    { icon:"fas fa-flag", title:{pl:"Firma polska",en:"Polish company",de:"Polnisches Unternehmen",ar:"شركة بولندية"}, desc:{pl:"Lepsze zrozumienie rynku.",en:"Better market understanding.",de:"Besseres Marktverständnis.",ar:"فهم أفضل للسوق الأوروبي."} },
+    { icon:"fas fa-globe-africa", title:{pl:"Egipskie zarządzanie",en:"Egyptian management",de:"Ägyptisches Management",ar:"إدارة مصرية"}, desc:{pl:"Bezpośrednio ze źródłem.",en:"Direct to source.",de:"Direkt zur Quelle.",ar:"ربط مباشر بالمصدر."} },
+    { icon:"fas fa-link", title:{pl:"Firma siostrzana",en:"Sister company",de:"Schwesterunternehmen",ar:"شركة شقيقة"}, desc:{pl:"Skraca dystans.",en:"Shortens distance.",de:"Verkürzt Distanz.",ar:"يقرّب المسافة."} },
+    { icon:"fas fa-clipboard-check", title:{pl:"Zrozumienie specyfikacji",en:"Specification understanding",de:"Spezifikationsverständnis",ar:"فهم المواصفات"}, desc:{pl:"Zrozumienie zastosowania.",en:"Understanding application.",de:"Anwendung verstehen.",ar:"فهم طبيعة الاستخدام."} },
+    { icon:"fas fa-truck", title:{pl:"Elastyczna logistyka",en:"Flexible logistics",de:"Flexible Logistik",ar:"مرونة لوجستية"}, desc:{pl:"Praktyczne rozwiązania.",en:"Practical solutions.",de:"Praktische Lösungen.",ar:"حلول عملية."} },
+    { icon:"fas fa-handshake", title:{pl:"Podejście długoterminowe",en:"Long-term approach",de:"Langfristig",ar:"أسلوب طويل الأمد"}, desc:{pl:"Stabilne relacje.",en:"Stable relationships.",de:"Stabile Beziehungen.",ar:"علاقات مستقرة."} }
+  ],
+  logi_stages: [
+    { pl:"Określenie specyfikacji", en:"Defining specifications", de:"Festlegung der Spezifikationen", ar:"تحديد المواصفات المطلوبة" },
+    { pl:"Uzgodnienie pakowania", en:"Agreeing on packaging", de:"Verpackungsvereinbarung", ar:"الاتفاق على نوع التعبئة" },
+    { pl:"Przygotowanie dokumentów", en:"Preparing documents", de:"Dokumentenerstellung", ar:"تجهيز المستندات التجارية والفنية" },
+    { pl:"Organizacja wysyłki", en:"Organizing shipment", de:"Versandorganisation", ar:"تنظيم الشحن" },
+    { pl:"Śledzenie przesyłki", en:"Shipment tracking", de:"Sendungsverfolgung", ar:"متابعة الشحنة" },
+    { pl:"Wsparcie w dostawie", en:"Delivery support", de:"Lieferunterstützung", ar:"دعم تسليم البضاعة" }
+  ],
+  logi_packaging: [
+    { pl:"Worki 25 kg", en:"25 kg bags", de:"25-kg-Säcke", ar:"أكياس 25 كجم" },
+    { pl:"Jumbo Bags", en:"Jumbo Bags", de:"Jumbo Bags", ar:"أكياس جامبو" },
+    { pl:"Inne opcje", en:"Other options", de:"Weitere Optionen", ar:"خيارات أخرى حسب الاتفاق" }
+  ],
+  logi_docs: [
+    { pl:"Commercial Invoice", en:"Commercial Invoice", de:"Commercial Invoice", ar:"فاتورة تجارية" },
+    { pl:"Packing List", en:"Packing List", de:"Packing List", ar:"قائمة التعبئة" },
+    { pl:"Certificate of Origin", en:"Certificate of Origin", de:"Certificate of Origin", ar:"شهادة المنشأ" },
+    { pl:"TDS / SDS / COA", en:"TDS / SDS / COA", de:"TDS / SDS / COA", ar:"TDS / SDS / COA" }
+  ],
+  qual_params: [
+    { pl:"Stopień rozdrobnienia", en:"Fineness", de:"Feinheit", ar:"النعومة" },
+    { pl:"Czystość CaCO₃", en:"CaCO₃ purity", de:"CaCO₃-Reinheit", ar:"نسبة النقاوة" },
+    { pl:"Zawartość wapnia", en:"Calcium content", de:"Calciumgehalt", ar:"نسبة الكالسيوم" },
+    { pl:"Białość", en:"Whiteness", de:"Weißgrad", ar:"البياض" },
+    { pl:"Wilgotność", en:"Moisture", de:"Feuchtigkeit", ar:"الرطوبة" },
+    { pl:"Pakowanie", en:"Packaging", de:"Verpackung", ar:"التعبئة" }
+  ],
+  qual_documents: [
+    { pl:"Technical Data Sheet (TDS)", en:"Technical Data Sheet (TDS)", de:"Technical Data Sheet (TDS)", ar:"ورقة البيانات الفنية (TDS)" },
+    { pl:"Safety Data Sheet (SDS)", en:"Safety Data Sheet (SDS)", de:"Safety Data Sheet (SDS)", ar:"ورقة بيانات السلامة (SDS)" },
+    { pl:"Certificate of Analysis (COA)", en:"Certificate of Analysis (COA)", de:"Certificate of Analysis (COA)", ar:"شهادة التحليل (COA)" },
+    { pl:"Commercial Invoice", en:"Commercial Invoice", de:"Commercial Invoice", ar:"فاتورة تجارية" },
+    { pl:"Packing List", en:"Packing List", de:"Packing List", ar:"قائمة التعبئة" },
+    { pl:"Certificate of Origin", en:"Certificate of Origin", de:"Certificate of Origin", ar:"شهادة المنشأ" }
+  ]
 };
 
+/* ============================================================
+   الدولة (State)
+============================================================ */
+let CONTENT = {};
+let ORIGINAL = '';
+let CURRENT_PAGE = 'hero';
+let MESSAGES = [];
+let MSG_FILTER = 'all';
+let CURRENT_USER = null;
+let PRODUCTS = [];
+
+/* ============================================================
+   Utilities
+============================================================ */
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
-function deepGet(o, p) { return p.split('.').reduce((x,k)=>(x && x[k]!==undefined) ? x[k] : undefined, o); }
-function deepSet(o, p, v) {
-  const k = p.split('.'); let t = o;
-  for (let i=0; i<k.length-1; i++) { if (!t[k[i]] || typeof t[k[i]] !== 'object') t[k[i]] = {}; t = t[k[i]]; }
-  t[k[k.length-1]] = v;
-}
-function toast(m, type='success') {
-  const t = $('#toast');
-  t.textContent = m;
-  t.className = 'toast show' + (type==='error'?' error':'');
-  setTimeout(()=>t.className = 'toast' + (type==='error'?' error':''), 2800);
-}
-function setStatus(s, cls='') { const e = $('#status'); e.textContent = s; e.className = 'status ' + cls; }
-function isDirty() { return JSON.stringify(CONTENT) !== ORIGINAL; }
-function updateSaveBar() { $('#saveBar').classList.toggle('show', isDirty()); }
-function safe(v) { return String(v==null?'':v).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
-/* ============================================================ LOGIN */
+function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
+function deepGet(obj, path) {
+  return path.split('.').reduce((o,k) => (o && o[k] !== undefined) ? o[k] : undefined, obj);
+}
+function deepSet(obj, path, value) {
+  const keys = path.split('.');
+  let o = obj;
+  for (let i=0; i<keys.length-1; i++) {
+    if (!o[keys[i]] || typeof o[keys[i]] !== 'object') o[keys[i]] = {};
+    o = o[keys[i]];
+  }
+  o[keys[keys.length-1]] = value;
+}
+
+function toast(msg, type='success') {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type==='error' ? ' error' : '');
+  setTimeout(() => t.className = 'toast' + (type==='error' ? ' error' : ''), 2800);
+}
+
+function setStatus(s, cls='') {
+  const el = $('#status');
+  el.textContent = s; el.className = 'status ' + cls;
+}
+
+function isDirty() {
+  return JSON.stringify(CONTENT) !== ORIGINAL;
+}
+
+function updateSaveBar() {
+  $('#saveBar').classList.toggle('show', isDirty());
+}
+
+/* ============================================================
+   LOGIN
+============================================================ */
 async function doLogin() {
   const u = $('#inpUser').value.trim();
   const p = $('#inpPass').value;
@@ -298,761 +446,808 @@ async function doLogin() {
     $('#loginWrap').style.display = 'none';
     $('#app').classList.add('active');
     await init();
-  } catch(e) { console.error(e); msg.textContent = 'خطأ في الاتصال. اتأكد من الـ SQL.'; }
+  } catch (e) {
+    console.error(e);
+    msg.textContent = 'خطأ في الاتصال بالخادم. اتأكد من إعداد قاعدة البيانات.';
+  }
 }
-function doLogout() { localStorage.removeItem('ew_admin_session'); location.reload(); }
+
+function doLogout() {
+  localStorage.removeItem('ew_admin_session');
+  location.reload();
+}
+
 function checkSession() {
   try {
     const s = localStorage.getItem('ew_admin_session');
     if (!s) return false;
-    const o = JSON.parse(s);
-    if (Date.now() - o.ts > 7*24*60*60*1000) { localStorage.removeItem('ew_admin_session'); return false; }
-    CURRENT_USER = o; return true;
+    const obj = JSON.parse(s);
+    if (Date.now() - obj.ts > 7*24*60*60*1000) { localStorage.removeItem('ew_admin_session'); return false; }
+    CURRENT_USER = obj;
+    return true;
   } catch(e) { return false; }
 }
 
-/* ============================================================ LOAD/SAVE */
+/* ============================================================
+   تحميل/حفظ المحتوى
+============================================================ */
 async function loadContent() {
   setStatus('جاري التحميل...', 'saving');
   try {
-    const { data } = await sb.from('site_content').select('content').eq('id', 1).single();
-    CONTENT = (data?.content && Object.keys(data.content).length > 0) ? data.content : {};
+    const { data, error } = await sb.from('site_content').select('content').eq('id', 1).single();
+    if (error) throw error;
+    if (data && data.content && Object.keys(data.content).length > 0) {
+      CONTENT = mergeDefaults(data.content);
+    } else {
+      CONTENT = deepClone(DEFAULT_CONTENT);
+      await sb.from('site_content').upsert({ id:1, content:CONTENT });
+    }
     ORIGINAL = JSON.stringify(CONTENT);
     setStatus('جاهز', 'saved');
-  } catch(e) { console.error(e); toast('خطأ في التحميل', 'error'); setStatus('خطأ', 'error'); }
+  } catch (e) {
+    console.error(e);
+    toast('خطأ في تحميل البيانات', 'error');
+    CONTENT = deepClone(DEFAULT_CONTENT);
+    ORIGINAL = JSON.stringify(CONTENT);
+    setStatus('وضع محلي', 'error');
+  }
 }
-async function loadProducts() {
-  try {
-    const { data } = await sb.from('products').select('*').order('sort_order', { ascending:true });
-    PRODUCTS = data || [];
-  } catch(e) { console.error(e); toast('خطأ في المنتجات','error'); }
+
+function mergeDefaults(existing) {
+  const merged = deepClone(DEFAULT_CONTENT);
+  function merge(target, source) {
+    for (const k in source) {
+      if (source[k] !== null && typeof source[k] === 'object' && !Array.isArray(source[k])) {
+        if (!target[k]) target[k] = {};
+        merge(target[k], source[k]);
+      } else {
+        target[k] = source[k];
+      }
+    }
+  }
+  merge(merged, existing);
+  return merged;
 }
-async function loadMessages() {
-  try {
-    const { data } = await sb.from('contact_messages').select('*').order('created_at', { ascending:false });
-    MESSAGES = data || [];
-    updateMsgBadge();
-  } catch(e) { console.error(e); }
-}
-function updateMsgBadge() {
-  const u = MESSAGES.filter(m => !m.is_read).length;
-  const b = $('#msgBadge');
-  if (u > 0) { b.style.display = 'inline-block'; b.textContent = u; } else b.style.display = 'none';
-}
+
 async function saveContent() {
   setStatus('جاري الحفظ...', 'saving');
   try {
     const { error } = await sb.from('site_content').upsert({ id:1, content:CONTENT, updated_at:new Date().toISOString() });
     if (error) throw error;
     ORIGINAL = JSON.stringify(CONTENT);
-    updateSaveBar(); setStatus('تم الحفظ', 'saved'); toast('تم الحفظ ✓');
-  } catch(e) { console.error(e); toast('خطأ: '+e.message, 'error'); setStatus('فشل', 'error'); }
-}
-function discardChanges() {
-  if (!confirm('تلغى كل التعديلات؟')) return;
-  CONTENT = JSON.parse(ORIGINAL);
-  renderPage(CURRENT_PAGE); updateSaveBar();
+    updateSaveBar();
+    setStatus('تم الحفظ', 'saved');
+    toast('تم الحفظ بنجاح ✓');
+  } catch (e) {
+    console.error(e);
+    toast('خطأ في الحفظ: ' + e.message, 'error');
+    setStatus('فشل الحفظ', 'error');
+  }
 }
 
-/* ============================================================ PAGES */
+function discardChanges() {
+  if (!confirm('هل تريد إلغاء كل التعديلات اللي عملتها؟')) return;
+  CONTENT = JSON.parse(ORIGINAL);
+  renderPage(CURRENT_PAGE);
+  updateSaveBar();
+  toast('تم إلغاء التعديلات');
+}
+
+/* ============================================================
+   Page rendering
+============================================================ */
+const PAGE_TITLES = {
+  hero:'الرئيسية والفيديوهات', about:'من نحن', product:'المنتج والمواصفات',
+  apps:'الاستخدامات الصناعية', why:'لماذا نحن', logistics:'اللوجستيات',
+  quality:'الجودة والمستندات', market:'السوق الأوروبي', contact:'بيانات الاتصال',
+  messages:'الرسائل', products:'المنتجات', settings:'الإعدادات والأمان'
+};
+
 function showPage(name) {
   CURRENT_PAGE = name;
   $$('.sb-item').forEach(el => el.classList.toggle('active', el.dataset.page === name));
   $('#pageTitle').textContent = PAGE_TITLES[name] || name;
-  renderPage(name);
+  if (name === 'products') {
+    (async () => {
+      await loadProducts();
+      $('#content').innerHTML = '<div class="page active">' + renderProductsPage() + '</div>';
+    })();
+  } else {
+    renderPage(name);
+  }
   $('#sidebar').classList.remove('open');
 }
+
 function renderPage(name) {
   const c = $('#content');
+  let html = '';
   switch(name) {
-    case 'hero':      c.innerHTML = renderHero(); break;
-    case 'about':     c.innerHTML = renderAbout(); break;
-    case 'products':  c.innerHTML = renderProducts(); break;
-    case 'logistics': c.innerHTML = renderLogistics(); break;
-    case 'quality':   c.innerHTML = renderQuality(); break;
-    case 'market':    c.innerHTML = renderMarket(); break;
-    case 'contact':   c.innerHTML = renderContact(); break;
-    case 'messages':  c.innerHTML = renderMessages(); renderMsgList(); break;
-    case 'navbar':    c.innerHTML = renderNavbar(); break;
-    case 'settings':  c.innerHTML = renderSettings(); break;
+    case 'hero':      html = renderHero(); break;
+    case 'about':     html = renderAbout(); break;
+    case 'product':   html = renderProduct(); break;
+    case 'apps':      html = renderApps(); break;
+    case 'why':       html = renderWhy(); break;
+    case 'logistics': html = renderLogistics(); break;
+    case 'quality':   html = renderQuality(); break;
+    case 'market':    html = renderMarket(); break;
+    case 'contact':   html = renderContact(); break;
+    case 'messages':  html = renderMessages(); loadMessages(); break;
+    case 'settings':  html = renderSettings(); break;
   }
+  c.innerHTML = '<div class="page active">' + html + '</div>';
   bindFields();
 }
 
 function quadInput(key, isTextarea=false) {
+  const tag = isTextarea ? 'textarea' : 'input';
   return LANGS.map(l => {
-    const v = deepGet(CONTENT, 'translations.'+l.code+'.'+key) ?? '';
-    const sv = safe(v);
-    if (isTextarea) return `<div class="field"><label><small>${l.name}</small></label><textarea data-tr="${key}.${l.code}">${sv}</textarea></div>`;
-    return `<div class="field"><label><small>${l.name}</small></label><input data-tr="${key}.${l.code}" value="${sv}"/></div>`;
+    const val = (CONTENT.translations?.[l.code]?.[key]) || '';
+    const safeVal = String(val).replace(/"/g,'&quot;').replace(/</g,'&lt;');
+    if (isTextarea) return `<div class="field"><label><small>${l.name}</small></label><textarea data-tr="${key}.${l.code}">${safeVal}</textarea></div>`;
+    return `<div class="field"><label><small>${l.name}</small></label><input data-tr="${key}.${l.code}" value="${safeVal}"/></div>`;
   }).join('');
 }
-function trField(key, label, ta=false) {
-  return `<div class="field"><label>${label}</label><div class="form-row quad">${quadInput(key, ta)}</div></div>`;
+
+function trField(key, label, isTextarea=false) {
+  return `
+    <div class="field">
+      <label>${label}</label>
+      <div class="form-row quad">${quadInput(key, isTextarea)}</div>
+    </div>`;
 }
 
-/* ==== HERO page ==== */
+// ========= HERO =========
 function renderHero() {
-  const videos = CONTENT.videos || [];
-  let v = '<div class="item-list">';
-  videos.forEach((src, i) => {
-    v += `<div class="dyn-item">
-      <div class="dyn-item-head">
-        <div class="num">فيديو #${i+1}</div>
-        <div class="actions">
-          ${i>0 ? `<button class="icon-btn" onclick="moveItem('videos',${i},-1)"><i class="fas fa-arrow-up"></i></button>`:''}
-          ${i<videos.length-1 ? `<button class="icon-btn" onclick="moveItem('videos',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
-          <button class="icon-btn del" onclick="deleteItem('videos',${i})"><i class="fas fa-trash"></i></button>
+  let videosHtml = '<div id="videoList" class="item-list">';
+  (CONTENT.videos || []).forEach((v, i) => {
+    videosHtml += `
+      <div class="dyn-item">
+        <div class="dyn-item-head">
+          <div class="num">فيديو #${i+1}</div>
+          <div class="actions">
+            ${i>0 ? `<button class="icon-btn up" onclick="moveItem('videos',${i},-1)"><i class="fas fa-arrow-up"></i></button>`:''}
+            ${i<CONTENT.videos.length-1 ? `<button class="icon-btn down" onclick="moveItem('videos',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
+            <button class="icon-btn del" onclick="deleteItem('videos',${i})"><i class="fas fa-trash"></i></button>
+          </div>
         </div>
-      </div>
-      <div class="field lang-ltr">
-        <label>رابط الفيديو (.mp4)</label>
-        <input data-array="videos.${i}" value="${safe(src)}"/>
-      </div>
-      <video class="vid-preview" src="${safe(src)}" muted controls></video>
-    </div>`;
+        <div class="field lang-ltr">
+          <label>رابط الفيديو (.mp4)</label>
+          <input data-array="videos.${i}" value="${(v||'').replace(/"/g,'&quot;')}" placeholder="https://.../video.mp4"/>
+        </div>
+        <video class="vid-preview" src="${v||''}" muted controls></video>
+      </div>`;
   });
-  v += `</div><button class="add-btn" onclick="addVideo()"><i class="fas fa-plus"></i> إضافة فيديو</button>`;
+  videosHtml += '</div><button class="add-btn" onclick="addVideo()"><i class="fas fa-plus"></i> إضافة فيديو جديد</button>';
+
   return `
-    <div class="card"><h3><i class="fas fa-video"></i> فيديوهات الـ Hero</h3>${v}</div>
-    <div class="card"><h3><i class="fas fa-heading"></i> محتوى الـ Hero</h3>
-      ${trField('hero_title','العنوان الرئيسي (يدعم HTML زي &lt;br&gt;)', true)}
+    <div class="card">
+      <h3><i class="fas fa-video"></i> فيديوهات الصفحة الرئيسية <small>روابط mp4 مباشرة</small></h3>
+      ${videosHtml}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> محتوى الـ Hero</h3>
+      ${trField('hero_title','العنوان الرئيسي (يدعم وسوم HTML زي &lt;br&gt;)', true)}
       ${trField('hero_sub','الوصف التحت العنوان', true)}
       ${trField('hero_btn','نص الزر')}
     </div>
-    <div class="card"><h3><i class="fas fa-handshake"></i> قسم الترحيب</h3>
-      ${trField('home_welcome_title','العنوان')}
-      ${trField('home_welcome_p1','الفقرة 1', true)}
-      ${trField('home_welcome_p2','الفقرة 2', true)}
-    </div>
-    <div class="card"><h3><i class="fas fa-list"></i> ماذا نقدم؟</h3>
-      ${trField('home_offer_title','العنوان')}
-      ${trField('home_offer_1','عرض 1')}
-      ${trField('home_offer_2','عرض 2')}
-      ${trField('home_offer_3','عرض 3')}
-      ${trField('home_offer_4','عرض 4')}
-    </div>
-    <div class="card"><h3><i class="fas fa-cubes"></i> قسم المنتجات في الصفحة الرئيسية</h3>
-      ${trField('home_products_title','العنوان')}
-      ${trField('home_closing','الجملة الختامية', true)}
-      <p style="font-size:0.82rem;color:rgba(255,255,255,0.5)">💡 لإدارة بطاقات المنتجات روح على تبويب "المنتجات"</p>
+    <div class="card">
+      <h3><i class="fas fa-bars"></i> قائمة الـ Navbar (القائمة العلوية)</h3>
+      ${trField('nav_about','من نحن')}
+      ${trField('nav_product','المنتج')}
+      ${trField('nav_applications','الاستخدامات')}
+      ${trField('nav_why','لماذا نحن')}
+      ${trField('nav_logistics','اللوجستيات')}
+      ${trField('nav_quality','الجودة')}
+      ${trField('nav_contact','تواصل معنا')}
     </div>`;
 }
 
-/* ==== ABOUT ==== */
+// ========= ABOUT =========
 function renderAbout() {
-  return `
-    <div class="card"><h3><i class="fas fa-image"></i> صورة من نحن</h3>
-      <div class="field lang-ltr"><label>رابط الصورة</label><input data-path="about_image" value="${safe(CONTENT.about_image)}"/></div>
-      ${CONTENT.about_image ? `<img src="${safe(CONTENT.about_image)}" style="max-width:300px;margin-top:10px;border:1px solid var(--border);border-radius:4px" onerror="this.style.display='none'"/>` : ''}
-    </div>
-    <div class="card"><h3><i class="fas fa-heading"></i> العنوان والفقرات</h3>
-      ${trField('about_title','عنوان الصفحة')}
-      ${trField('about_p1','الفقرة 1', true)}
-      ${trField('about_p2','الفقرة 2', true)}
-      ${trField('about_p3','الفقرة 3', true)}
-      ${trField('about_p4','الفقرة 4', true)}
-    </div>
-    <div class="card"><h3><i class="fas fa-eye"></i> الرؤية</h3>
-      ${trField('about_vision_title','العنوان')}
-      ${trField('about_vision','النص', true)}
-    </div>
-    <div class="card"><h3><i class="fas fa-bullseye"></i> الرسالة</h3>
-      ${trField('about_mission_title','العنوان')}
-      ${trField('about_mission','النص', true)}
-    </div>
-    <div class="card"><h3><i class="fas fa-gem"></i> القيم</h3>
-      ${trField('about_values_title','العنوان')}
-      ${trField('about_v1','القيمة 1')}
-      ${trField('about_v2','القيمة 2')}
-      ${trField('about_v3','القيمة 3')}
-      ${trField('about_v4','القيمة 4')}
-      ${trField('about_v5','القيمة 5')}
-    </div>`;
-}
-
-/* ==== PRODUCTS ==== */
-function renderProducts() {
-  let list = '';
-  if (PRODUCTS.length === 0) {
-    list = '<div class="empty"><i class="fas fa-box-open"></i>مفيش منتجات</div>';
-  } else {
-    list = PRODUCTS.map(p => `
-      <div class="product-card-admin">
-        <img src="${safe(p.image)}" alt="" onerror="this.style.background='#222';this.removeAttribute('src')"/>
-        <div class="pc-info">
-          <h4>${safe(p.name?.ar || p.name?.en || p.slug)} ${!p.is_active ? '<span class="pill off">مخفي</span>' : '<span class="pill">نشط</span>'}</h4>
-          <p>${safe(p.short_desc?.ar || p.short_desc?.en || '')}</p>
-          <div class="meta">Slug: ${safe(p.slug)} · الترتيب: ${p.sort_order}</div>
-        </div>
-        <div class="pc-actions">
-          <button class="btn small" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i> تعديل</button>
-        </div>
-      </div>`).join('');
-  }
+  const imgSafe = (CONTENT.about_image||'').replace(/"/g,'&quot;');
   return `
     <div class="card">
-      <h3><i class="fas fa-cubes"></i> المنتجات <small>اضف / عدل / احذف</small></h3>
-      <div style="margin-bottom:16px">
-        <button class="btn" onclick="newProduct()"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
+      <h3><i class="fas fa-image"></i> صورة قسم "من نحن"</h3>
+      <div class="field lang-ltr">
+        <label>رابط الصورة</label>
+        <input data-path="about_image" value="${imgSafe}" placeholder="https://..."/>
       </div>
-      ${list}
+      ${CONTENT.about_image ? `<img src="${imgSafe}" style="max-width:300px;margin-top:10px;border:1px solid var(--border);border-radius:4px" onerror="this.style.display='none'"/>` : ''}
     </div>
-    <div class="card"><h3><i class="fas fa-heading"></i> نصوص صفحة المنتجات</h3>
-      ${trField('products_title','عنوان الصفحة')}
-      ${trField('products_intro','المقدمة', true)}
-      ${trField('products_cta','نص زر "عرض التفاصيل"')}
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> العناوين</h3>
+      ${trField('about_title','عنوان القسم')}
+      ${trField('about_heading','العنوان الفرعي')}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-paragraph"></i> الفقرات</h3>
+      ${trField('about_p1','الفقرة الأولى', true)}
+      ${trField('about_p2','الفقرة الثانية', true)}
+      ${trField('about_p3','الفقرة الثالثة', true)}
+      ${trField('about_p4','الفقرة الرابعة', true)}
     </div>`;
 }
 
-/* ==== PRODUCT MODAL ==== */
-function newProduct() {
-  EDITING_PRODUCT = {
-    id: null, slug:'', category:'industrial_minerals', icon:'fas fa-cube', image:'',
-    gallery: [],
-    sort_order: (PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.sort_order||0))+1 : 1),
-    is_active: true,
-    name: {pl:'',en:'',de:'',ar:''},
-    short_desc: {pl:'',en:'',de:'',ar:''},
-    long_content: {pl:{intro:'',sections:[]}, en:{intro:'',sections:[]}, de:{intro:'',sections:[]}, ar:{intro:'',sections:[]}}
-  };
-  openProductModal('إضافة منتج جديد');
-  $('#btnDeleteProduct').style.display = 'none';
-}
-function editProduct(id) {
-  const p = PRODUCTS.find(x => x.id === id); if (!p) return;
-  EDITING_PRODUCT = JSON.parse(JSON.stringify(p));
-  // اتأكد من هيكل long_content
-  if (!EDITING_PRODUCT.long_content || typeof EDITING_PRODUCT.long_content !== 'object') EDITING_PRODUCT.long_content = {};
-  LANGS.forEach(l => {
-    if (!EDITING_PRODUCT.long_content[l.code]) EDITING_PRODUCT.long_content[l.code] = { intro:'', sections:[] };
-    if (!Array.isArray(EDITING_PRODUCT.long_content[l.code].sections)) EDITING_PRODUCT.long_content[l.code].sections = [];
-  });
-  if (!EDITING_PRODUCT.name) EDITING_PRODUCT.name = {};
-  if (!EDITING_PRODUCT.short_desc) EDITING_PRODUCT.short_desc = {};
-  if (!Array.isArray(EDITING_PRODUCT.gallery)) EDITING_PRODUCT.gallery = [];
-  openProductModal('تعديل المنتج');
-  $('#btnDeleteProduct').style.display = 'inline-block';
-}
-function openProductModal(title) {
-  $('#modalTitle').textContent = title;
-  $('#productModal').classList.add('show');
-  renderProductForm();
-}
-function closeProductModal() {
-  $('#productModal').classList.remove('show');
-  EDITING_PRODUCT = null;
-}
-
-function renderProductForm() {
-  const p = EDITING_PRODUCT;
-  const body = $('#modalBody');
-
-  // tabs للغات لصفحة المحتوى المطوّل
-  const longTabs = LANGS.map((l,i) => `<button class="${i===0?'active':''}" onclick="switchLangTab('${l.code}')" data-lang-tab="${l.code}">${l.name}</button>`).join('');
-
-  body.innerHTML = `
-    <div class="form-row">
-      <div class="field lang-ltr"><label>Slug (معرّف فريد بالإنجليزي) *</label><input id="pSlug" value="${safe(p.slug)}" placeholder="calcium-carbonate"/></div>
-      <div class="field lang-ltr"><label>أيقونة Font Awesome</label><input id="pIcon" value="${safe(p.icon)}" placeholder="fas fa-cube"/></div>
-    </div>
-    <div class="form-row">
-      <div class="field lang-ltr"><label>رابط الصورة</label><input id="pImage" value="${safe(p.image)}"/></div>
-      <div class="field">
-        <label>التصنيف</label>
-        <select id="pCategory">
-          <option value="industrial_minerals" ${p.category==='industrial_minerals'?'selected':''}>خامات معدنية</option>
-          <option value="natural_stone" ${p.category==='natural_stone'?'selected':''}>حجر طبيعي</option>
-          <option value="other" ${p.category==='other'?'selected':''}>أخرى</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="field lang-ltr"><label>ترتيب العرض</label><input type="number" id="pSort" value="${p.sort_order||0}"/></div>
-      <div class="field"><label>الحالة</label><select id="pActive"><option value="true" ${p.is_active?'selected':''}>نشط (ظاهر)</option><option value="false" ${!p.is_active?'selected':''}>مخفي</option></select></div>
-    </div>
-
-    ${p.image ? `<img src="${safe(p.image)}" style="max-width:200px;margin-bottom:16px;border:1px solid var(--border);border-radius:4px" onerror="this.style.display='none'"/>` : ''}
-
-    <div class="card" style="background:#0a0a0a;margin-bottom:14px"><h3 style="margin-bottom:10px">
-      <i class="fas fa-images"></i> معرض الصور <small>صور إضافية تظهر في صفحة المنتج (اختياري)</small>
-    </h3>
-      <div id="galleryList">${renderGalleryList()}</div>
-      <button class="add-btn" onclick="addGalleryImage()"><i class="fas fa-plus"></i> إضافة صورة للمعرض</button>
-    </div>
-
-    <div class="card" style="background:#0a0a0a;margin-bottom:14px"><h3 style="margin-bottom:10px">اسم المنتج (4 لغات)</h3>
-      <div class="form-row quad">
-        ${LANGS.map(l=>`<div class="field"><label><small>${l.name}</small></label><input id="pName_${l.code}" value="${safe(p.name?.[l.code])}"/></div>`).join('')}
-      </div>
-    </div>
-
-    <div class="card" style="background:#0a0a0a;margin-bottom:14px"><h3 style="margin-bottom:10px">الوصف المختصر (4 لغات) <small>يظهر في البطاقة</small></h3>
-      <div class="form-row quad">
-        ${LANGS.map(l=>`<div class="field"><label><small>${l.name}</small></label><textarea id="pShort_${l.code}" style="min-height:60px">${safe(p.short_desc?.[l.code])}</textarea></div>`).join('')}
-      </div>
-    </div>
-
-    <div class="card" style="background:#0a0a0a"><h3 style="margin-bottom:10px">محتوى صفحة المنتج التفصيلية</h3>
-      <div class="lang-tabs" id="longTabs">${longTabs}</div>
-      ${LANGS.map((l,i) => `
-        <div class="lang-pane ${i===0?'active':''}" data-lang-pane="${l.code}">
-          <div class="field"><label>المقدمة (${l.name})</label>
-            <textarea id="pIntro_${l.code}" style="min-height:100px">${safe(p.long_content?.[l.code]?.intro)}</textarea>
-          </div>
-          <label style="color:var(--gold);margin-bottom:8px;display:block;font-weight:600">الأقسام (${l.name})</label>
-          <div id="secList_${l.code}">${renderSectionList(l.code)}</div>
-          <button class="add-btn" onclick="addSection('${l.code}')"><i class="fas fa-plus"></i> إضافة قسم</button>
-        </div>`).join('')}
-    </div>`;
-}
-
-function renderSectionList(lang) {
-  const secs = EDITING_PRODUCT.long_content?.[lang]?.sections || [];
-  if (!secs.length) return '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;font-size:0.85rem">مفيش أقسام - اضغط "إضافة قسم"</p>';
-  return secs.map((s, i) => {
-    let body = '';
-    if (s.type === 'text') {
-      body = `<textarea oninput="updateSection('${lang}',${i},'content',this.value)" placeholder="نص الفقرة..." style="min-height:80px">${safe(s.content)}</textarea>`;
-    } else if (s.type === 'note') {
-      body = `<textarea oninput="updateSection('${lang}',${i},'content',this.value)" placeholder="نص الملاحظة..." style="min-height:60px">${safe(s.content)}</textarea>`;
-    } else if (s.type === 'list') {
-      const items = (s.items||[]).map((it, j) => `<div style="display:flex;gap:6px;margin-bottom:6px">
-        <input value="${safe(it)}" oninput="updateListItem('${lang}',${i},${j},this.value)" placeholder="عنصر القائمة"/>
-        <button class="icon-btn del" onclick="deleteListItem('${lang}',${i},${j})"><i class="fas fa-times"></i></button>
-      </div>`).join('');
-      body = `${items}<button class="btn small secondary" onclick="addListItem('${lang}',${i})"><i class="fas fa-plus"></i> عنصر</button>`;
-    } else if (s.type === 'uses') {
-      const items = (s.items||[]).map((u, j) => `<div style="background:#050505;padding:12px;border:1px solid var(--border);border-radius:4px;margin-bottom:10px">
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          ${u.image ? `<img src="${safe(u.image)}" style="width:70px;height:70px;object-fit:cover;border-radius:4px;flex-shrink:0" onerror="this.style.display='none'"/>` : `<div style="width:70px;height:70px;background:#1a1a1a;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:0.5"><i class="fas fa-image"></i></div>`}
-          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
-            <input placeholder="عنوان الاستخدام" value="${safe(u.title)}" oninput="updateUseItem('${lang}',${i},${j},'title',this.value)" style="font-weight:600"/>
-            <input placeholder="رابط الصورة (URL)" value="${safe(u.image)}" oninput="updateUseItem('${lang}',${i},${j},'image',this.value)" style="direction:ltr;text-align:left;font-size:0.78rem"/>
-            <textarea placeholder="وصف الاستخدام" oninput="updateUseItem('${lang}',${i},${j},'desc',this.value)" style="min-height:50px;font-size:0.85rem">${safe(u.desc)}</textarea>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            ${j>0 ? `<button class="icon-btn" onclick="moveUseItem('${lang}',${i},${j},-1)"><i class="fas fa-arrow-up"></i></button>` : ''}
-            ${j<(s.items||[]).length-1 ? `<button class="icon-btn" onclick="moveUseItem('${lang}',${i},${j},1)"><i class="fas fa-arrow-down"></i></button>` : ''}
-            <button class="icon-btn del" onclick="deleteUseItem('${lang}',${i},${j})"><i class="fas fa-trash"></i></button>
+// ========= PRODUCT =========
+function renderProduct() {
+  let specsHtml = '<div id="specsList" class="item-list">';
+  (CONTENT.specs || []).forEach((s, i) => {
+    specsHtml += `
+      <div class="dyn-item">
+        <div class="dyn-item-head">
+          <div class="num">مواصفة #${i+1}</div>
+          <div class="actions">
+            ${i>0 ? `<button class="icon-btn up" onclick="moveItem('specs',${i},-1)"><i class="fas fa-arrow-up"></i></button>`:''}
+            ${i<CONTENT.specs.length-1 ? `<button class="icon-btn down" onclick="moveItem('specs',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
+            <button class="icon-btn del" onclick="deleteItem('specs',${i})"><i class="fas fa-trash"></i></button>
           </div>
         </div>
-      </div>`).join('');
-      body = `${items}<button class="btn small secondary" onclick="addUseItem('${lang}',${i})"><i class="fas fa-plus"></i> إضافة استخدام</button>`;
-    }
-    return `<div class="sec-editor">
-      <div class="sec-editor-head">
-        <select onchange="changeSectionType('${lang}',${i},this.value)">
-          <option value="text" ${s.type==='text'?'selected':''}>نص</option>
-          <option value="list" ${s.type==='list'?'selected':''}>قائمة</option>
-          <option value="uses" ${s.type==='uses'?'selected':''}>استخدامات (كروت بصور)</option>
-          <option value="note" ${s.type==='note'?'selected':''}>ملاحظة (إطار ذهبي)</option>
-        </select>
-        <input placeholder="عنوان القسم (اختياري)" value="${safe(s.heading)}" oninput="updateSection('${lang}',${i},'heading',this.value)" style="flex:1"/>
-        ${i>0 ? `<button class="icon-btn" onclick="moveSection('${lang}',${i},-1)"><i class="fas fa-arrow-up"></i></button>` : ''}
-        ${i<secs.length-1 ? `<button class="icon-btn" onclick="moveSection('${lang}',${i},1)"><i class="fas fa-arrow-down"></i></button>` : ''}
-        <button class="icon-btn del" onclick="deleteSection('${lang}',${i})"><i class="fas fa-trash"></i></button>
-        <span class="num">#${i+1}</span>
-      </div>
-      ${body}
-    </div>`;
-  }).join('');
-}
-
-function switchLangTab(lang) {
-  $$('#longTabs button').forEach(b => b.classList.toggle('active', b.dataset.langTab === lang));
-  $$('.lang-pane').forEach(p => p.classList.toggle('active', p.dataset.langPane === lang));
-}
-
-function addSection(lang) {
-  if (!EDITING_PRODUCT.long_content[lang]) EDITING_PRODUCT.long_content[lang] = { intro:'', sections:[] };
-  EDITING_PRODUCT.long_content[lang].sections.push({ type:'text', heading:'', content:'' });
-  refreshSectionList(lang);
-}
-function deleteSection(lang, i) {
-  EDITING_PRODUCT.long_content[lang].sections.splice(i, 1);
-  refreshSectionList(lang);
-}
-function moveSection(lang, i, dir) {
-  const arr = EDITING_PRODUCT.long_content[lang].sections;
-  const ni = i + dir;
-  if (ni<0 || ni>=arr.length) return;
-  [arr[i], arr[ni]] = [arr[ni], arr[i]];
-  refreshSectionList(lang);
-}
-function changeSectionType(lang, i, type) {
-  const s = EDITING_PRODUCT.long_content[lang].sections[i];
-  s.type = type;
-  if (type === 'list' && !s.items) s.items = [''];
-  if (type === 'uses' && !s.items) s.items = [{ title:'', desc:'', image:'' }];
-  refreshSectionList(lang);
-}
-function updateSection(lang, i, field, val) {
-  EDITING_PRODUCT.long_content[lang].sections[i][field] = val;
-}
-function addListItem(lang, i) {
-  const s = EDITING_PRODUCT.long_content[lang].sections[i];
-  if (!s.items) s.items = [];
-  s.items.push('');
-  refreshSectionList(lang);
-}
-function updateListItem(lang, i, j, val) {
-  EDITING_PRODUCT.long_content[lang].sections[i].items[j] = val;
-}
-function deleteListItem(lang, i, j) {
-  EDITING_PRODUCT.long_content[lang].sections[i].items.splice(j, 1);
-  refreshSectionList(lang);
-}
-
-// دوال معرض الصور (gallery)
-function renderGalleryList() {
-  const gallery = EDITING_PRODUCT?.gallery || [];
-  if (!gallery.length) return '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:16px;font-size:0.82rem">مفيش صور - اضغط الزر تحت</p>';
-  return gallery.map((src, i) => `<div style="background:#050505;padding:10px;border:1px solid var(--border);border-radius:4px;margin-bottom:8px;display:flex;gap:10px;align-items:center">
-    ${src ? `<img src="${safe(src)}" style="width:70px;height:70px;object-fit:cover;border-radius:4px;flex-shrink:0" onerror="this.style.display='none'"/>` : `<div style="width:70px;height:70px;background:#1a1a1a;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:0.5"><i class="fas fa-image"></i></div>`}
-    <input placeholder="رابط الصورة" value="${safe(src)}" oninput="updateGalleryImage(${i}, this.value)" style="direction:ltr;text-align:left;flex:1"/>
-    <div style="display:flex;flex-direction:column;gap:4px">
-      ${i>0 ? `<button class="icon-btn" onclick="moveGalleryImage(${i},-1)"><i class="fas fa-arrow-up"></i></button>` : ''}
-      ${i<gallery.length-1 ? `<button class="icon-btn" onclick="moveGalleryImage(${i},1)"><i class="fas fa-arrow-down"></i></button>` : ''}
-      <button class="icon-btn del" onclick="deleteGalleryImage(${i})"><i class="fas fa-trash"></i></button>
-    </div>
-  </div>`).join('');
-}
-function addGalleryImage() {
-  if (!EDITING_PRODUCT.gallery) EDITING_PRODUCT.gallery = [];
-  EDITING_PRODUCT.gallery.push('');
-  refreshGallery();
-}
-function updateGalleryImage(i, val) {
-  if (!EDITING_PRODUCT.gallery) EDITING_PRODUCT.gallery = [];
-  EDITING_PRODUCT.gallery[i] = val;
-  // بس preview بيتحدث بعد blur, مش بالـ live input
-}
-function deleteGalleryImage(i) {
-  EDITING_PRODUCT.gallery.splice(i, 1);
-  refreshGallery();
-}
-function moveGalleryImage(i, dir) {
-  const arr = EDITING_PRODUCT.gallery;
-  const ni = i + dir;
-  if (ni<0 || ni>=arr.length) return;
-  [arr[i], arr[ni]] = [arr[ni], arr[i]];
-  refreshGallery();
-}
-function refreshGallery() {
-  const el = document.getElementById('galleryList');
-  if (el) el.innerHTML = renderGalleryList();
-}
-
-// دوال لعناصر الـ uses (بها صور)
-function addUseItem(lang, i) {
-  const s = EDITING_PRODUCT.long_content[lang].sections[i];
-  if (!s.items) s.items = [];
-  s.items.push({ title:'', desc:'', image:'' });
-  refreshSectionList(lang);
-}
-function updateUseItem(lang, i, j, field, val) {
-  if (!EDITING_PRODUCT.long_content[lang].sections[i].items[j]) EDITING_PRODUCT.long_content[lang].sections[i].items[j] = {};
-  EDITING_PRODUCT.long_content[lang].sections[i].items[j][field] = val;
-  // لو غيّر صورة، نعيد الرسم عشان تتحدث الـ preview
-  if (field === 'image') refreshSectionList(lang);
-}
-function deleteUseItem(lang, i, j) {
-  EDITING_PRODUCT.long_content[lang].sections[i].items.splice(j, 1);
-  refreshSectionList(lang);
-}
-function moveUseItem(lang, i, j, dir) {
-  const arr = EDITING_PRODUCT.long_content[lang].sections[i].items;
-  const ni = j + dir;
-  if (ni<0 || ni>=arr.length) return;
-  [arr[j], arr[ni]] = [arr[ni], arr[j]];
-  refreshSectionList(lang);
-}
-function refreshSectionList(lang) {
-  const el = document.getElementById('secList_'+lang);
-  if (el) el.innerHTML = renderSectionList(lang);
-}
-
-async function saveProduct() {
-  const p = EDITING_PRODUCT;
-  const slug = $('#pSlug').value.trim();
-  if (!slug) { toast('Slug مطلوب', 'error'); return; }
-  if (!/^[a-z0-9-]+$/.test(slug)) { toast('Slug لازم يبقى حروف إنجليزي وأرقام و - فقط', 'error'); return; }
-
-  // اجمع القيم من الفورم
-  const payload = {
-    slug,
-    icon: $('#pIcon').value.trim() || 'fas fa-cube',
-    image: $('#pImage').value.trim() || null,
-    gallery: (p.gallery || []).filter(g => g && g.trim()),
-    category: $('#pCategory').value,
-    sort_order: parseInt($('#pSort').value) || 0,
-    is_active: $('#pActive').value === 'true',
-    name: {}, short_desc: {}, long_content: p.long_content,
-    updated_at: new Date().toISOString()
-  };
-  LANGS.forEach(l => {
-    payload.name[l.code] = $('#pName_'+l.code).value.trim();
-    payload.short_desc[l.code] = $('#pShort_'+l.code).value.trim();
-    // حدّث الـ intro في long_content
-    if (!payload.long_content[l.code]) payload.long_content[l.code] = { intro:'', sections:[] };
-    payload.long_content[l.code].intro = $('#pIntro_'+l.code).value;
+        <div class="field lang-ltr">
+          <label>أيقونة Font Awesome <small>مثال: fas fa-gem - موقع: fontawesome.com/icons</small></label>
+          <input data-array="specs.${i}.icon" value="${(s.icon||'').replace(/"/g,'&quot;')}" placeholder="fas fa-gem"/>
+          <i class="${s.icon||''}" style="font-size:1.3rem;color:var(--gold);margin-top:8px;display:inline-block"></i>
+        </div>
+        <div class="field"><label>العنوان (4 لغات)</label>
+          <div class="form-row quad">
+            ${LANGS.map(l=>`<input data-array="specs.${i}.title.${l.code}" value="${((s.title||{})[l.code]||'').replace(/"/g,'&quot;')}" placeholder="${l.name}"/>`).join('')}
+          </div>
+        </div>
+        <div class="field"><label>الوصف (4 لغات)</label>
+          <div class="form-row quad">
+            ${LANGS.map(l=>`<input data-array="specs.${i}.desc.${l.code}" value="${((s.desc||{})[l.code]||'').replace(/"/g,'&quot;')}" placeholder="${l.name}"/>`).join('')}
+          </div>
+        </div>
+      </div>`;
   });
+  specsHtml += '</div><button class="add-btn" onclick="addSpec()"><i class="fas fa-plus"></i> إضافة مواصفة</button>';
 
-  try {
-    if (p.id) {
-      const { error } = await sb.from('products').update(payload).eq('id', p.id);
-      if (error) throw error;
-      toast('تم تحديث المنتج ✓');
-    } else {
-      const { error } = await sb.from('products').insert(payload);
-      if (error) throw error;
-      toast('تم إضافة المنتج ✓');
-    }
-    closeProductModal();
-    await loadProducts();
-    renderPage('products');
-  } catch(e) {
-    console.error(e);
-    toast('خطأ: ' + (e.message || 'فشل الحفظ'), 'error');
-  }
+  return `
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> عناوين قسم المنتج</h3>
+      ${trField('product_title','عنوان القسم')}
+      ${trField('product_sub','الوصف التحت العنوان')}
+      ${trField('product_intro','المقدمة', true)}
+      ${trField('product_note','الملاحظة الأخيرة', true)}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-th"></i> بطاقات المواصفات <small>كل بطاقة بها أيقونة + عنوان + وصف بكل اللغات</small></h3>
+      ${specsHtml}
+    </div>`;
 }
 
-async function deleteProduct() {
-  if (!EDITING_PRODUCT?.id) return;
-  if (!confirm('تحذف المنتج ده نهائيًا؟')) return;
-  try {
-    const { error } = await sb.from('products').delete().eq('id', EDITING_PRODUCT.id);
-    if (error) throw error;
-    toast('تم الحذف');
-    closeProductModal();
-    await loadProducts();
-    renderPage('products');
-  } catch(e) { toast('خطأ: '+e.message, 'error'); }
+// ========= APPS =========
+function renderApps() {
+  let appsHtml = '<div id="appsList" class="item-list">';
+  (CONTENT.applications || []).forEach((a, i) => {
+    appsHtml += `
+      <div class="dyn-item">
+        <div class="dyn-item-head">
+          <div class="num">استخدام #${i+1}</div>
+          <div class="actions">
+            ${i>0 ? `<button class="icon-btn up" onclick="moveItem('applications',${i},-1)"><i class="fas fa-arrow-up"></i></button>`:''}
+            ${i<CONTENT.applications.length-1 ? `<button class="icon-btn down" onclick="moveItem('applications',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
+            <button class="icon-btn del" onclick="deleteItem('applications',${i})"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="field"><label>العنوان (4 لغات)</label>
+          <div class="form-row quad">
+            ${LANGS.map(l=>`<input data-array="applications.${i}.title.${l.code}" value="${((a.title||{})[l.code]||'').replace(/"/g,'&quot;')}" placeholder="${l.name}"/>`).join('')}
+          </div>
+        </div>
+        <div class="field"><label>الوصف (4 لغات)</label>
+          <div class="form-row quad">
+            ${LANGS.map(l=>`<textarea data-array="applications.${i}.desc.${l.code}" placeholder="${l.name}">${((a.desc||{})[l.code]||'').replace(/</g,'&lt;')}</textarea>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  });
+  appsHtml += '</div><button class="add-btn" onclick="addApp()"><i class="fas fa-plus"></i> إضافة استخدام</button>';
+
+  return `
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> عنوان قسم الاستخدامات</h3>
+      ${trField('apps_title','عنوان القسم')}
+      ${trField('apps_footer','التذييل (تحت البطاقات)', true)}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-industry"></i> بطاقات الاستخدامات الصناعية</h3>
+      ${appsHtml}
+    </div>`;
 }
 
-/* ==== LOGISTICS / QUALITY / MARKET / CONTACT / MESSAGES ==== */
+// ========= WHY =========
+function renderWhy() {
+  let whyHtml = '<div id="whyList" class="item-list">';
+  (CONTENT.why_cards || []).forEach((w, i) => {
+    whyHtml += `
+      <div class="dyn-item">
+        <div class="dyn-item-head">
+          <div class="num">بطاقة #${i+1}</div>
+          <div class="actions">
+            ${i>0 ? `<button class="icon-btn up" onclick="moveItem('why_cards',${i},-1)"><i class="fas fa-arrow-up"></i></button>`:''}
+            ${i<CONTENT.why_cards.length-1 ? `<button class="icon-btn down" onclick="moveItem('why_cards',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
+            <button class="icon-btn del" onclick="deleteItem('why_cards',${i})"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="field lang-ltr">
+          <label>أيقونة Font Awesome</label>
+          <input data-array="why_cards.${i}.icon" value="${(w.icon||'').replace(/"/g,'&quot;')}" placeholder="fas fa-star"/>
+          <i class="${w.icon||''}" style="font-size:1.3rem;color:var(--gold);margin-top:8px;display:inline-block"></i>
+        </div>
+        <div class="field"><label>العنوان (4 لغات)</label>
+          <div class="form-row quad">
+            ${LANGS.map(l=>`<input data-array="why_cards.${i}.title.${l.code}" value="${((w.title||{})[l.code]||'').replace(/"/g,'&quot;')}" placeholder="${l.name}"/>`).join('')}
+          </div>
+        </div>
+        <div class="field"><label>الوصف (4 لغات)</label>
+          <div class="form-row quad">
+            ${LANGS.map(l=>`<textarea data-array="why_cards.${i}.desc.${l.code}" placeholder="${l.name}">${((w.desc||{})[l.code]||'').replace(/</g,'&lt;')}</textarea>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  });
+  whyHtml += '</div><button class="add-btn" onclick="addWhy()"><i class="fas fa-plus"></i> إضافة بطاقة</button>';
+
+  return `
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> عنوان القسم</h3>
+      ${trField('why_title','عنوان القسم')}
+      ${trField('why_sub','الوصف التحت العنوان', true)}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-star"></i> بطاقات لماذا نحن</h3>
+      ${whyHtml}
+    </div>`;
+}
+
+// ========= LOGISTICS =========
+function renderSimpleList(arrKey, arrName, addFn) {
+  let html = `<div class="item-list">`;
+  (CONTENT[arrKey] || []).forEach((item, i) => {
+    html += `
+      <div class="dyn-item">
+        <div class="dyn-item-head">
+          <div class="num">#${i+1}</div>
+          <div class="actions">
+            ${i>0 ? `<button class="icon-btn up" onclick="moveItem('${arrKey}',${i},-1)"><i class="fas fa-arrow-up"></i></button>`:''}
+            ${i<CONTENT[arrKey].length-1 ? `<button class="icon-btn down" onclick="moveItem('${arrKey}',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
+            <button class="icon-btn del" onclick="deleteItem('${arrKey}',${i})"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="form-row quad">
+          ${LANGS.map(l=>`<input data-array="${arrKey}.${i}.${l.code}" value="${((item||{})[l.code]||'').replace(/"/g,'&quot;')}" placeholder="${l.name}"/>`).join('')}
+        </div>
+      </div>`;
+  });
+  html += `</div><button class="add-btn" onclick="${addFn}()"><i class="fas fa-plus"></i> إضافة</button>`;
+  return html;
+}
+
 function renderLogistics() {
   return `
-    <div class="card"><h3><i class="fas fa-heading"></i> العنوان والمقدمة</h3>
-      ${trField('logi_title','عنوان الصفحة')}
-      ${trField('logi_intro','الفقرة 1', true)}
-      ${trField('logi_intro2','الفقرة 2', true)}
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> العناوين</h3>
+      ${trField('logi_title','عنوان القسم الرئيسي')}
+      ${trField('logi_stages_title','عنوان "مراحل تنسيق التوريد"')}
+      ${trField('logi_pack_title','عنوان "التعبئة"')}
+      ${trField('logi_docs_title','عنوان "المستندات"')}
     </div>
-    <div class="card"><h3><i class="fas fa-list-check"></i> ماذا نقدم؟</h3>
-      ${trField('logi_what_title','العنوان')}
-      ${trField('logi_what_1','نقطة 1')}${trField('logi_what_2','نقطة 2')}
-      ${trField('logi_what_3','نقطة 3')}${trField('logi_what_4','نقطة 4')}
-      ${trField('logi_what_5','نقطة 5')}${trField('logi_what_6','نقطة 6')}
+    <div class="card">
+      <h3><i class="fas fa-list-ol"></i> مراحل التوريد</h3>
+      ${renderSimpleList('logi_stages','مرحلة','addLogiStage')}
     </div>
-    <div class="card"><h3><i class="fas fa-box-open"></i> المنتجات اللي تحتاج لوجستيات خاصة</h3>
-      ${trField('logi_prod_title','العنوان')}
-      ${trField('logi_caco_title','عنوان كربونات الكالسيوم')}
-      ${trField('logi_caco_desc','وصف كربونات الكالسيوم', true)}
-      ${trField('logi_marble_title','عنوان الرخام')}
-      ${trField('logi_marble_desc','وصف الرخام', true)}
+    <div class="card">
+      <h3><i class="fas fa-box"></i> أنواع التعبئة</h3>
+      ${renderSimpleList('logi_packaging','نوع','addLogiPack')}
     </div>
-    <div class="card"><h3><i class="fas fa-flag-checkered"></i> الخاتمة</h3>
-      ${trField('logi_end','نص الخاتمة', true)}
+    <div class="card">
+      <h3><i class="fas fa-file-alt"></i> المستندات</h3>
+      ${renderSimpleList('logi_docs','مستند','addLogiDoc')}
     </div>`;
 }
 
+// ========= QUALITY =========
 function renderQuality() {
   return `
-    <div class="card"><h3><i class="fas fa-heading"></i> العنوان والمقدمة</h3>
-      ${trField('qual_title','عنوان الصفحة')}
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> العناوين</h3>
+      ${trField('qual_title','عنوان القسم')}
       ${trField('qual_intro','المقدمة', true)}
-    </div>
-    <div class="card"><h3><i class="fas fa-flask"></i> جدول كربونات الكالسيوم</h3>
-      ${trField('qual_caco_title','العنوان')}${trField('qual_caco_intro','المقدمة الصغيرة')}
-      ${trField('qual_caco_1','عنصر 1')}${trField('qual_caco_2','عنصر 2')}${trField('qual_caco_3','عنصر 3')}
-      ${trField('qual_caco_4','عنصر 4')}${trField('qual_caco_5','عنصر 5')}${trField('qual_caco_6','عنصر 6')}
-    </div>
-    <div class="card"><h3><i class="fas fa-cubes"></i> جدول الرخام</h3>
-      ${trField('qual_marble_title','العنوان')}${trField('qual_marble_intro','المقدمة الصغيرة')}
-      ${trField('qual_marble_1','عنصر 1')}${trField('qual_marble_2','عنصر 2')}${trField('qual_marble_3','عنصر 3')}
-      ${trField('qual_marble_4','عنصر 4')}${trField('qual_marble_5','عنصر 5')}${trField('qual_marble_6','عنصر 6')}${trField('qual_marble_7','عنصر 7')}
-    </div>
-    <div class="card"><h3><i class="fas fa-file"></i> قسم المستندات</h3>
-      ${trField('qual_docs_title','عنوان قسم المستندات')}
+      ${trField('qual_params_title','عنوان "معايير الجودة"')}
+      ${trField('qual_docs_title','عنوان "المستندات المتاحة"')}
       ${trField('qual_note','الملاحظة الأخيرة', true)}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-list"></i> معايير الجودة</h3>
+      ${renderSimpleList('qual_params','معيار','addQualParam')}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-file"></i> المستندات المتاحة</h3>
+      ${renderSimpleList('qual_documents','مستند','addQualDoc')}
     </div>`;
 }
 
+// ========= MARKET =========
 function renderMarket() {
   return `
-    <div class="card"><h3><i class="fas fa-heading"></i> عنوان الصفحة والفقرات</h3>
-      ${trField('market_title','عنوان الصفحة')}
-      ${trField('market_p1','الفقرة 1', true)}
-      ${trField('market_p2','الفقرة 2', true)}
-      ${trField('market_p3','الفقرة 3', true)}
+    <div class="card">
+      <h3><i class="fas fa-globe-europe"></i> السوق البولندي والأوروبي</h3>
+      ${trField('market_title','عنوان القسم')}
+      ${trField('market_p1','الفقرة الأولى', true)}
+      ${trField('market_p2','الفقرة الثانية', true)}
+      ${trField('market_p3','الفقرة الثالثة', true)}
     </div>`;
 }
 
+// ========= CONTACT =========
 function renderContact() {
   const c = CONTENT.contact || {};
+  const safe = v => (v||'').replace(/"/g,'&quot;');
   return `
-    <div class="card"><h3><i class="fas fa-address-book"></i> بيانات الاتصال</h3>
+    <div class="card">
+      <h3><i class="fas fa-address-book"></i> بيانات الاتصال</h3>
       <div class="form-row">
         <div class="field lang-ltr"><label>البريد الإلكتروني</label><input data-path="contact.email" value="${safe(c.email)}"/></div>
         <div class="field lang-ltr"><label>رقم الهاتف</label><input data-path="contact.phone" value="${safe(c.phone)}"/></div>
       </div>
       <div class="form-row">
-        <div class="field lang-ltr"><label>واتساب <small>أرقام فقط</small></label><input data-path="contact.whatsapp" value="${safe(c.whatsapp)}"/></div>
-        <div class="field lang-ltr"><label>فيسبوك</label><input data-path="contact.facebook" value="${safe(c.facebook)}"/></div>
+        <div class="field lang-ltr"><label>رقم الواتساب <small>أرقام فقط مع كود الدولة</small></label><input data-path="contact.whatsapp" value="${safe(c.whatsapp)}" placeholder="48123456789"/></div>
+        <div class="field lang-ltr"><label>رابط الفيسبوك</label><input data-path="contact.facebook" value="${safe(c.facebook)}" placeholder="https://facebook.com/..."/></div>
       </div>
       <div class="field"><label>العنوان</label><input data-path="contact.address" value="${safe(c.address)}"/></div>
     </div>
-    <div class="card"><h3><i class="fas fa-heading"></i> نصوص الصفحة</h3>
-      ${trField('contact_title','عنوان الصفحة')}
-      ${trField('contact_intro','المقدمة', true)}
+    <div class="card">
+      <h3><i class="fas fa-heading"></i> عناوين قسم الاتصال</h3>
+      ${trField('contact_title','عنوان القسم')}
+      ${trField('contact_heading','العنوان الفرعي')}
+      ${trField('contact_p','الفقرة التعريفية', true)}
       ${trField('contact_hq','كلمة "المقر"')}
       ${trField('contact_phone','كلمة "الهاتف / واتساب"')}
     </div>
-    <div class="card"><h3><i class="fas fa-wpforms"></i> نصوص الفورم</h3>
+    <div class="card">
+      <h3><i class="fas fa-edit"></i> نصوص فورم الاتصال</h3>
       ${trField('form_title','عنوان الفورم')}
       ${trField('form_name','placeholder الاسم')}
-      ${trField('form_company','placeholder الشركة')}
       ${trField('form_email','placeholder الإيميل')}
       ${trField('form_phone','placeholder الهاتف')}
-      ${trField('form_country','placeholder الدولة')}
-      ${trField('form_product','placeholder المنتج')}
-      ${trField('form_product_caco','خيار كربونات الكالسيوم')}
-      ${trField('form_product_marble','خيار الرخام')}
-      ${trField('form_product_other','خيار "آخر"')}
-      ${trField('form_spec','placeholder المواصفة')}
-      ${trField('form_quantity','placeholder الكمية')}
+      ${trField('form_company','placeholder الشركة')}
       ${trField('form_message','placeholder الرسالة')}
       ${trField('form_submit','نص زر الإرسال')}
-      ${trField('form_success','رسالة النجاح')}
-      ${trField('form_error','رسالة الخطأ')}
+      ${trField('form_success','رسالة نجاح الإرسال')}
+      ${trField('form_error','رسالة خطأ')}
     </div>`;
 }
 
+// ========= MESSAGES =========
 function renderMessages() {
   return `
-    <div class="card"><h3><i class="fas fa-inbox"></i> الرسائل الواردة</h3>
+    <div class="card">
+      <h3><i class="fas fa-inbox"></i> الرسائل الواردة من فورم الاتصال</h3>
       <div class="msg-filters">
-        <button class="${MSG_FILTER==='all'?'active':''}" onclick="setFilter('all')">الكل (${MESSAGES.length})</button>
-        <button class="${MSG_FILTER==='unread'?'active':''}" onclick="setFilter('unread')">غير مقروء (${MESSAGES.filter(m=>!m.is_read).length})</button>
-        <button class="${MSG_FILTER==='read'?'active':''}" onclick="setFilter('read')">مقروء</button>
+        <button class="${MSG_FILTER==='all'?'active':''}" onclick="setMsgFilter('all')">الكل</button>
+        <button class="${MSG_FILTER==='unread'?'active':''}" onclick="setMsgFilter('unread')">غير مقروء</button>
+        <button class="${MSG_FILTER==='read'?'active':''}" onclick="setMsgFilter('read')">مقروء</button>
       </div>
-      <div id="msgList"></div>
+      <div id="msgList"><div class="empty"><i class="fas fa-spinner fa-spin"></i>جاري التحميل...</div></div>
     </div>`;
 }
-function setFilter(f) { MSG_FILTER = f; renderPage('messages'); }
+
+async function loadMessages() {
+  try {
+    const { data, error } = await sb.from('contact_messages').select('*').order('created_at', { ascending:false });
+    if (error) throw error;
+    MESSAGES = data || [];
+    renderMsgList();
+    updateMsgBadge();
+  } catch(e) {
+    console.error(e);
+    const list = $('#msgList');
+    if (list) list.innerHTML = '<div class="empty"><i class="fas fa-exclamation-triangle"></i>خطأ في التحميل</div>';
+  }
+}
+
+function updateMsgBadge() {
+  const unread = MESSAGES.filter(m => !m.is_read).length;
+  const b = $('#msgBadge');
+  if (!b) return;
+  if (unread > 0) { b.style.display = 'inline-block'; b.textContent = unread; }
+  else b.style.display = 'none';
+}
+
+function setMsgFilter(f) { MSG_FILTER = f; renderPage('messages'); }
+
 function renderMsgList() {
-  const list = $('#msgList'); if (!list) return;
-  let f = MESSAGES;
-  if (MSG_FILTER==='unread') f = f.filter(m=>!m.is_read);
-  if (MSG_FILTER==='read') f = f.filter(m=>m.is_read);
-  if (!f.length) { list.innerHTML = '<div class="empty"><i class="fas fa-envelope-open"></i>مفيش رسائل</div>'; return; }
-  list.innerHTML = f.map(m => {
+  const list = $('#msgList');
+  if (!list) return;
+  let filtered = MESSAGES;
+  if (MSG_FILTER==='unread') filtered = MESSAGES.filter(m => !m.is_read);
+  if (MSG_FILTER==='read')   filtered = MESSAGES.filter(m => m.is_read);
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty"><i class="fas fa-envelope-open"></i>مفيش رسائل</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(m => {
     const date = new Date(m.created_at).toLocaleString('ar-EG', { dateStyle:'medium', timeStyle:'short' });
-    return `<div class="msg-item ${m.is_read?'read':''}">
-      <div class="msg-head">
-        <div class="name"><i class="fas fa-user" style="color:var(--gold);margin-left:6px"></i>${safe(m.name)}</div>
-        <div class="time">${date}</div>
-      </div>
-      <div class="msg-info">
-        ${m.company ? `<span><i class="fas fa-building"></i>${safe(m.company)}</span>` : ''}
-        ${m.email ? `<span><i class="fas fa-envelope"></i>${safe(m.email)}</span>` : ''}
-        ${m.phone ? `<span><i class="fas fa-phone"></i>${safe(m.phone)}</span>` : ''}
-        ${m.country ? `<span><i class="fas fa-globe"></i>${safe(m.country)}</span>` : ''}
-        ${m.product ? `<span><i class="fas fa-cube"></i>${safe(m.product)}</span>` : ''}
-        ${m.quantity ? `<span><i class="fas fa-weight-hanging"></i>${safe(m.quantity)}</span>` : ''}
-        ${m.specification ? `<span><i class="fas fa-tag"></i>${safe(m.specification)}</span>` : ''}
-      </div>
-      ${m.message ? `<div class="msg-body">${safe(m.message)}</div>` : ''}
-      <div class="msg-actions">
-        ${!m.is_read ? `<button class="btn small secondary" onclick="markRead(${m.id},true)"><i class="fas fa-check"></i> تعليم مقروء</button>` : `<button class="btn small secondary" onclick="markRead(${m.id},false)"><i class="fas fa-undo"></i> رجّع</button>`}
-        ${m.email ? `<a class="btn small" href="mailto:${m.email}"><i class="fas fa-reply"></i> رد</a>` : ''}
-        ${m.phone ? `<a class="btn small" style="background:#25D366;color:white" href="https://wa.me/${m.phone.replace(/\D/g,'')}" target="_blank"><i class="fab fa-whatsapp"></i> واتساب</a>` : ''}
-        <button class="btn small danger" onclick="delMsg(${m.id})"><i class="fas fa-trash"></i> حذف</button>
-      </div>
-    </div>`;
+    const safe = v => (v||'-').toString().replace(/</g,'&lt;');
+    return `
+      <div class="msg-item ${m.is_read?'read':''}">
+        <div class="msg-head">
+          <div class="name"><i class="fas fa-user" style="color:var(--gold);margin-left:6px"></i>${safe(m.name)}</div>
+          <div class="time">${date}</div>
+        </div>
+        <div class="msg-info">
+          ${m.email ? `<span><i class="fas fa-envelope"></i>${safe(m.email)}</span>` : ''}
+          ${m.phone ? `<span><i class="fas fa-phone"></i>${safe(m.phone)}</span>` : ''}
+          ${m.company ? `<span><i class="fas fa-building"></i>${safe(m.company)}</span>` : ''}
+        </div>
+        ${m.message ? `<div class="msg-body">${safe(m.message)}</div>` : ''}
+        <div class="msg-actions">
+          ${!m.is_read ? `<button class="btn small secondary" onclick="markRead(${m.id}, true)"><i class="fas fa-check"></i> تعليم كمقروء</button>` : `<button class="btn small secondary" onclick="markRead(${m.id}, false)"><i class="fas fa-undo"></i> رجّع لغير مقروء</button>`}
+          ${m.email ? `<a class="btn small" href="mailto:${m.email}?subject=Re: Your Inquiry"><i class="fas fa-reply"></i> رد بالإيميل</a>` : ''}
+          ${m.phone ? `<a class="btn small" href="https://wa.me/${(m.phone||'').replace(/\D/g,'')}" target="_blank" style="background:#25D366;color:white"><i class="fab fa-whatsapp"></i> واتساب</a>` : ''}
+          <button class="btn small danger" onclick="deleteMsg(${m.id})"><i class="fas fa-trash"></i> حذف</button>
+        </div>
+      </div>`;
   }).join('');
 }
-async function markRead(id, v) {
-  try { await sb.from('contact_messages').update({ is_read:v }).eq('id', id);
-    const m = MESSAGES.find(x=>x.id===id); if (m) m.is_read = v;
-    renderMsgList(); updateMsgBadge(); toast(v?'تم التعليم':'تم الإرجاع');
-  } catch(e) { toast('خطأ','error'); }
-}
-async function delMsg(id) {
-  if (!confirm('تحذف الرسالة؟')) return;
-  try { await sb.from('contact_messages').delete().eq('id', id);
-    MESSAGES = MESSAGES.filter(m=>m.id!==id);
-    renderMsgList(); updateMsgBadge(); toast('تم الحذف');
-  } catch(e) { toast('خطأ','error'); }
+
+async function markRead(id, val) {
+  try {
+    const { error } = await sb.from('contact_messages').update({ is_read:val }).eq('id', id);
+    if (error) throw error;
+    const m = MESSAGES.find(x => x.id===id); if (m) m.is_read = val;
+    renderMsgList(); updateMsgBadge();
+    toast(val ? 'تم تعليم كمقروء' : 'تم إرجاعه لغير مقروء');
+  } catch(e) { toast('خطأ: ' + e.message, 'error'); }
 }
 
-/* ==== NAVBAR/FOOTER ==== */
-function renderNavbar() {
-  return `
-    <div class="card"><h3><i class="fas fa-bars"></i> كلمات القائمة العلوية</h3>
-      ${trField('nav_home','الرئيسية')}${trField('nav_about','من نحن')}
-      ${trField('nav_products','المنتجات')}${trField('nav_logistics','اللوجستيات')}
-      ${trField('nav_quality','الجودة')}${trField('nav_market','السوق')}
-      ${trField('nav_contact','تواصل معنا')}
-    </div>
-    <div class="card"><h3><i class="fas fa-tags"></i> العلامة التجارية</h3>
-      <div class="form-row">
-        <div class="field"><label>الاسم الرئيسي</label><input data-path="brand.name" value="${safe(CONTENT.brand?.name)}"/></div>
-        <div class="field"><label>التسمية الفرعية</label><input data-path="brand.subname" value="${safe(CONTENT.brand?.subname)}"/></div>
-      </div>
-    </div>
-    <div class="card"><h3><i class="fas fa-copyright"></i> الفوتر</h3>
-      ${trField('footer_rights','"جميع الحقوق محفوظة"')}
-      ${trField('fab_call','نص "اتصل"')}
-    </div>`;
+async function deleteMsg(id) {
+  if (!confirm('تحذف الرسالة دي نهائيًا؟')) return;
+  try {
+    const { error } = await sb.from('contact_messages').delete().eq('id', id);
+    if (error) throw error;
+    MESSAGES = MESSAGES.filter(m => m.id !== id);
+    renderMsgList(); updateMsgBadge();
+    toast('تم الحذف');
+  } catch(e) { toast('خطأ: ' + e.message, 'error'); }
 }
 
-/* ==== SETTINGS ==== */
+// ========= SETTINGS =========
 function renderSettings() {
+  const b = CONTENT.brand || {};
   return `
-    <div class="card"><h3><i class="fas fa-lock"></i> تغيير بيانات الدخول</h3>
+    <div class="card">
+      <h3><i class="fas fa-lock"></i> تغيير بيانات الدخول</h3>
       <div class="form-row">
-        <div class="field lang-ltr"><label>اسم المستخدم الجديد</label><input type="text" id="newUser" placeholder="${CURRENT_USER?.username||'admin'}"/></div>
-        <div class="field lang-ltr"><label>كلمة المرور الجديدة</label><input type="text" id="newPass" placeholder="سيب فاضي لو مش هتغيّرها"/></div>
+        <div class="field lang-ltr"><label>اسم المستخدم الجديد</label><input type="text" id="newUser" placeholder="${CURRENT_USER?.username || 'admin'}"/></div>
+        <div class="field lang-ltr"><label>كلمة المرور الجديدة</label><input type="text" id="newPass" placeholder="سيب فاضي لو مش هتغيرها"/></div>
       </div>
-      <button class="btn" onclick="changeCreds()"><i class="fas fa-save"></i> حفظ</button>
+      <button class="btn" onclick="changeCredentials()"><i class="fas fa-save"></i> حفظ بيانات الدخول</button>
       <div id="credMsg" style="margin-top:10px;font-size:0.85rem;"></div>
     </div>
-    <div class="card"><h3><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> منطقة الخطر</h3>
-      <p style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:14px">هيمسح نصوص الموقع ويرجّع للديفولت.</p>
-      <button class="btn danger" onclick="resetAll()"><i class="fas fa-undo"></i> تفريغ كل النصوص</button>
+    <div class="card">
+      <h3><i class="fas fa-tags"></i> بيانات العلامة التجارية</h3>
+      <div class="form-row">
+        <div class="field"><label>الاسم الرئيسي (في الـ Navbar)</label><input data-path="brand.name" value="${(b.name||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="field"><label>التسمية الفرعية</label><input data-path="brand.subname" value="${(b.subname||'').replace(/"/g,'&quot;')}"/></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-copyright"></i> نصوص الفوتر وعناصر متفرقة</h3>
+      ${trField('footer_rights','عبارة "جميع الحقوق محفوظة"')}
+      ${trField('fab_call','نص "اتصل" في زر الواتساب العائم')}
+    </div>
+    <div class="card">
+      <h3><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> منطقة الخطر</h3>
+      <p style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:14px">استعادة القيم الافتراضية هتمسح كل التعديلات وترجّع الموقع لحالته الأصلية.</p>
+      <button class="btn danger" onclick="resetDefaults()"><i class="fas fa-undo"></i> استعادة القيم الافتراضية</button>
     </div>`;
 }
-async function changeCreds() {
+
+async function changeCredentials() {
   const u = $('#newUser').value.trim();
   const p = $('#newPass').value;
   const msg = $('#credMsg');
-  if (!u && !p) { msg.style.color='var(--warn)'; msg.textContent='اكتب حاجة واحدة على الأقل'; return; }
+  msg.textContent = '';
+  if (!u && !p) { msg.style.color = 'var(--warn)'; msg.textContent = 'اكتب حاجة واحدة على الأقل'; return; }
   try {
     const upd = {};
     if (u) upd.username = u;
     if (p) upd.password = p;
-    await sb.from('admin_users').update(upd).eq('id', CURRENT_USER.id);
+    const { error } = await sb.from('admin_users').update(upd).eq('id', CURRENT_USER.id);
+    if (error) throw error;
     msg.style.color = 'var(--success)';
-    msg.textContent = '✓ تم التحديث - سجل خروج ودخول بالجديد';
+    msg.textContent = '✓ تم التحديث بنجاح. سجل خروج ودخول تاني بالبيانات الجديدة.';
     if (u) CURRENT_USER.username = u;
     $('#newUser').value = ''; $('#newPass').value = '';
-    toast('تم التحديث');
-  } catch(e) { msg.style.color='var(--danger)'; msg.textContent='خطأ: '+e.message; }
+    toast('تم تحديث بيانات الدخول');
+  } catch(e) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'خطأ: ' + e.message;
+  }
 }
-async function resetAll() {
-  if (!confirm('متأكد؟ هيمسح كل النصوص!')) return;
-  CONTENT = {};
+
+async function resetDefaults() {
+  if (!confirm('متأكد؟ هيتم حذف كل التعديلات وإرجاع الموقع للقيم الافتراضية!')) return;
+  if (!confirm('آخر تأكيد - مفيش رجعة!')) return;
+  CONTENT = deepClone(DEFAULT_CONTENT);
   try {
-    await sb.from('site_content').upsert({ id:1, content:{}, updated_at:new Date().toISOString() });
+    const { error } = await sb.from('site_content').upsert({ id:1, content:CONTENT, updated_at:new Date().toISOString() });
+    if (error) throw error;
     ORIGINAL = JSON.stringify(CONTENT);
-    updateSaveBar(); renderPage(CURRENT_PAGE);
-    toast('تم التفريغ - الموقع هيستخدم الديفولت');
+    updateSaveBar();
+    renderPage(CURRENT_PAGE);
+    toast('تم إرجاع القيم الافتراضية');
   } catch(e) { toast('خطأ: '+e.message, 'error'); }
 }
 
-/* ==== Bindings ==== */
+/* ============================================================
+   PRODUCTS MANAGEMENT
+============================================================ */
+async function loadProducts() {
+  try {
+    const { data, error } = await sb.from('products').select('*').order('id', { ascending: true });
+    if (error) throw error;
+    PRODUCTS = data || [];
+    updateProductsBadge();
+  } catch(e) {
+    console.error(e);
+    PRODUCTS = [];
+    toast('خطأ في تحميل المنتجات', 'error');
+  }
+}
+
+function updateProductsBadge() {
+  const badge = $('#productsBadge');
+  if (badge) {
+    badge.textContent = PRODUCTS.length;
+    badge.style.display = PRODUCTS.length ? 'inline-block' : 'none';
+  }
+}
+
+function renderProductsPage() {
+  let html = `
+    <div class="card">
+      <h3><i class="fas fa-boxes"></i> إدارة المنتجات</h3>
+      <div class="bulk-actions">
+        <button class="btn danger" onclick="deleteFirst16Products()"><i class="fas fa-trash"></i> حذف أول 16 منتج</button>
+        <button class="btn secondary" onclick="loadProductsAndRender()"><i class="fas fa-sync-alt"></i> تحديث</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="products-table">
+          <thead><tr><th>ID</th><th>صورة</th><th>الاسم (AR)</th><th>Slug</th><th>أيقونة</th><th>إجراءات</th></tr></thead>
+          <tbody id="productsTableBody">
+  `;
+  if (PRODUCTS.length === 0) {
+    html += `<tr><td colspan="6" style="text-align:center;padding:30px;">لا توجد منتجات</td></tr>`;
+  } else {
+    PRODUCTS.forEach(p => {
+      const nameAr = (p.name && p.name.ar) || '-';
+      const image = p.image || '';
+      html += `
+        <tr>
+          <td>${p.id}</td>
+          <td>${image ? `<img src="${image}" onerror="this.style.display='none'">` : '-'}</td>
+          <td>${nameAr}</td>
+          <td>${p.slug || '-'}</td>
+          <td><i class="${p.icon || ''}" style="color:var(--gold)"></i> ${p.icon || '-'}</td>
+          <td class="actions">
+            <button class="icon-btn" onclick="openEditModal(${p.id})" title="تعديل"><i class="fas fa-edit"></i></button>
+            <button class="icon-btn del" onclick="deleteProduct(${p.id})" title="حذف"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+  html += `</tbody></table></div></div>`;
+  return html;
+}
+
+async function loadProductsAndRender() {
+  await loadProducts();
+  if (CURRENT_PAGE === 'products') {
+    $('#content').innerHTML = '<div class="page active">' + renderProductsPage() + '</div>';
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('هل تريد حذف هذا المنتج؟')) return;
+  try {
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error) throw error;
+    toast('تم حذف المنتج');
+    await loadProductsAndRender();
+  } catch(e) {
+    toast('خطأ: ' + e.message, 'error');
+  }
+}
+
+async function deleteFirst16Products() {
+  if (!confirm('سيتم حذف أول 16 منتج (حسب ID) نهائياً. متأكد؟')) return;
+  try {
+    const { data, error } = await sb.from('products').select('id').order('id', { ascending: true }).limit(16);
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      toast('لا توجد منتجات كافية للحذف', 'error');
+      return;
+    }
+    const ids = data.map(p => p.id);
+    const { error: delError } = await sb.from('products').delete().in('id', ids);
+    if (delError) throw delError;
+    toast(`تم حذف ${ids.length} منتج بنجاح`);
+    await loadProductsAndRender();
+  } catch(e) {
+    toast('خطأ: ' + e.message, 'error');
+  }
+}
+
+function openEditModal(id) {
+  const product = PRODUCTS.find(p => p.id === id);
+  if (!product) return;
+  $('#editProductId').value = product.id;
+  $('#editSlug').value = product.slug || '';
+  $('#editIcon').value = product.icon || '';
+  $('#editImage').value = product.image || '';
+  $('#editNameAr').value = product.name?.ar || '';
+  $('#editNameEn').value = product.name?.en || '';
+  $('#editNamePl').value = product.name?.pl || '';
+  $('#editNameDe').value = product.name?.de || '';
+  $('#editShortAr').value = product.short_desc?.ar || '';
+  $('#editShortEn').value = product.short_desc?.en || '';
+  $('#editShortPl').value = product.short_desc?.pl || '';
+  $('#editShortDe').value = product.short_desc?.de || '';
+  $('#editDescAr').value = product.full_desc?.ar || '';
+  $('#editDescEn').value = product.full_desc?.en || '';
+  $('#editDescPl').value = product.full_desc?.pl || '';
+  $('#editDescDe').value = product.full_desc?.de || '';
+  $('#editModal').classList.add('show');
+}
+
+function closeEditModal() {
+  $('#editModal').classList.remove('show');
+}
+
+async function saveProduct(e) {
+  e.preventDefault();
+  const id = $('#editProductId').value;
+  if (!id) return;
+  const updates = {
+    slug: $('#editSlug').value.trim(),
+    icon: $('#editIcon').value.trim(),
+    image: $('#editImage').value.trim(),
+    name: {
+      ar: $('#editNameAr').value.trim(),
+      en: $('#editNameEn').value.trim(),
+      pl: $('#editNamePl').value.trim(),
+      de: $('#editNameDe').value.trim()
+    },
+    short_desc: {
+      ar: $('#editShortAr').value.trim(),
+      en: $('#editShortEn').value.trim(),
+      pl: $('#editShortPl').value.trim(),
+      de: $('#editShortDe').value.trim()
+    },
+    full_desc: {
+      ar: $('#editDescAr').value.trim(),
+      en: $('#editDescEn').value.trim(),
+      pl: $('#editDescPl').value.trim(),
+      de: $('#editDescDe').value.trim()
+    }
+  };
+  try {
+    const { error } = await sb.from('products').update(updates).eq('id', id);
+    if (error) throw error;
+    toast('تم حفظ التعديلات');
+    closeEditModal();
+    await loadProductsAndRender();
+  } catch(e) {
+    toast('خطأ: ' + e.message, 'error');
+  }
+}
+
+/* ============================================================
+   Bindings
+============================================================ */
 function bindFields() {
   $$('#content [data-tr]').forEach(el => {
     el.addEventListener('input', () => {
@@ -1064,81 +1259,99 @@ function bindFields() {
     });
   });
   $$('#content [data-path]').forEach(el => {
-    el.addEventListener('input', () => { deepSet(CONTENT, el.dataset.path, el.value); updateSaveBar(); });
+    el.addEventListener('input', () => {
+      deepSet(CONTENT, el.dataset.path, el.value);
+      updateSaveBar();
+    });
   });
   $$('#content [data-array]').forEach(el => {
-    el.addEventListener('input', () => { deepSet(CONTENT, el.dataset.array, el.value); updateSaveBar(); });
+    el.addEventListener('input', () => {
+      deepSet(CONTENT, el.dataset.array, el.value);
+      updateSaveBar();
+    });
   });
 }
 
-/* ==== Item ops (videos) ==== */
+/* ============================================================
+   Items ops
+============================================================ */
 function moveItem(arrKey, idx, dir) {
-  const arr = CONTENT[arrKey]; if (!arr) return;
-  const ni = idx + dir; if (ni<0 || ni>=arr.length) return;
+  const arr = CONTENT[arrKey];
+  if (!arr) return;
+  const ni = idx + dir;
+  if (ni<0 || ni>=arr.length) return;
   [arr[idx], arr[ni]] = [arr[ni], arr[idx]];
-  updateSaveBar(); renderPage(CURRENT_PAGE);
-}
-function deleteItem(arrKey, idx) {
-  if (!confirm('تحذف؟')) return;
-  if (!CONTENT[arrKey]) return;
-  CONTENT[arrKey].splice(idx, 1);
-  updateSaveBar(); renderPage(CURRENT_PAGE);
-}
-function addVideo() {
-  if (!CONTENT.videos) CONTENT.videos = [];
-  CONTENT.videos.push("");
-  updateSaveBar(); renderPage('hero');
+  updateSaveBar();
+  renderPage(CURRENT_PAGE);
 }
 
-// expose للـ onclick
+function deleteItem(arrKey, idx) {
+  if (!confirm('تحذف العنصر ده؟')) return;
+  if (!CONTENT[arrKey]) return;
+  CONTENT[arrKey].splice(idx, 1);
+  updateSaveBar();
+  renderPage(CURRENT_PAGE);
+}
+
+function addVideo() { if (!CONTENT.videos) CONTENT.videos = []; CONTENT.videos.push(""); updateSaveBar(); renderPage('hero'); }
+function addSpec() { if (!CONTENT.specs) CONTENT.specs = []; CONTENT.specs.push({ icon:"fas fa-star", title:{pl:"",en:"",de:"",ar:""}, desc:{pl:"",en:"",de:"",ar:""} }); updateSaveBar(); renderPage('product'); }
+function addApp() { if (!CONTENT.applications) CONTENT.applications = []; CONTENT.applications.push({ title:{pl:"",en:"",de:"",ar:""}, desc:{pl:"",en:"",de:"",ar:""} }); updateSaveBar(); renderPage('apps'); }
+function addWhy() { if (!CONTENT.why_cards) CONTENT.why_cards = []; CONTENT.why_cards.push({ icon:"fas fa-star", title:{pl:"",en:"",de:"",ar:""}, desc:{pl:"",en:"",de:"",ar:""} }); updateSaveBar(); renderPage('why'); }
+function addLogiStage() { if (!CONTENT.logi_stages) CONTENT.logi_stages = []; CONTENT.logi_stages.push({pl:"",en:"",de:"",ar:""}); updateSaveBar(); renderPage('logistics'); }
+function addLogiPack() { if (!CONTENT.logi_packaging) CONTENT.logi_packaging = []; CONTENT.logi_packaging.push({pl:"",en:"",de:"",ar:""}); updateSaveBar(); renderPage('logistics'); }
+function addLogiDoc() { if (!CONTENT.logi_docs) CONTENT.logi_docs = []; CONTENT.logi_docs.push({pl:"",en:"",de:"",ar:""}); updateSaveBar(); renderPage('logistics'); }
+function addQualParam() { if (!CONTENT.qual_params) CONTENT.qual_params = []; CONTENT.qual_params.push({pl:"",en:"",de:"",ar:""}); updateSaveBar(); renderPage('quality'); }
+function addQualDoc() { if (!CONTENT.qual_documents) CONTENT.qual_documents = []; CONTENT.qual_documents.push({pl:"",en:"",de:"",ar:""}); updateSaveBar(); renderPage('quality'); }
+
 window.moveItem = moveItem;
 window.deleteItem = deleteItem;
 window.addVideo = addVideo;
-window.newProduct = newProduct;
-window.editProduct = editProduct;
-window.closeProductModal = closeProductModal;
-window.switchLangTab = switchLangTab;
-window.addSection = addSection;
-window.deleteSection = deleteSection;
-window.moveSection = moveSection;
-window.changeSectionType = changeSectionType;
-window.updateSection = updateSection;
-window.addListItem = addListItem;
-window.updateListItem = updateListItem;
-window.deleteListItem = deleteListItem;
-window.addUseItem = addUseItem;
-window.updateUseItem = updateUseItem;
-window.deleteUseItem = deleteUseItem;
-window.moveUseItem = moveUseItem;
-window.addGalleryImage = addGalleryImage;
-window.updateGalleryImage = updateGalleryImage;
-window.deleteGalleryImage = deleteGalleryImage;
-window.moveGalleryImage = moveGalleryImage;
+window.addSpec = addSpec;
+window.addApp = addApp;
+window.addWhy = addWhy;
+window.addLogiStage = addLogiStage;
+window.addLogiPack = addLogiPack;
+window.addLogiDoc = addLogiDoc;
+window.addQualParam = addQualParam;
+window.addQualDoc = addQualDoc;
 window.markRead = markRead;
-window.delMsg = delMsg;
-window.setFilter = setFilter;
-window.changeCreds = changeCreds;
-window.resetAll = resetAll;
+window.deleteMsg = deleteMsg;
+window.setMsgFilter = setMsgFilter;
+window.changeCredentials = changeCredentials;
+window.resetDefaults = resetDefaults;
+window.discardChanges = discardChanges;
+window.loadProductsAndRender = loadProductsAndRender;
+window.deleteProduct = deleteProduct;
+window.deleteFirst16Products = deleteFirst16Products;
+window.openEditModal = openEditModal;
+window.closeEditModal = closeEditModal;
 
-/* ==== INIT ==== */
+/* ============================================================
+   INIT
+============================================================ */
 async function init() {
-  await Promise.all([loadContent(), loadProducts(), loadMessages()]);
+  await loadContent();
+  loadMessages();
+  loadProducts();
   showPage('hero');
 }
 
+// Event bindings
 $('#btnLogin').addEventListener('click', doLogin);
 $('#inpPass').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
 $('#inpUser').addEventListener('keydown', e => { if (e.key==='Enter') $('#inpPass').focus(); });
 $('#btnLogout').addEventListener('click', doLogout);
 $('#btnSave').addEventListener('click', saveContent);
 $('#btnDiscard').addEventListener('click', discardChanges);
-$('#btnSaveProduct').addEventListener('click', saveProduct);
-$('#btnDeleteProduct').addEventListener('click', deleteProduct);
 $('#menuToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+$('#editProductForm').addEventListener('submit', saveProduct);
 $$('.sb-item').forEach(el => el.addEventListener('click', () => showPage(el.dataset.page)));
 
 window.addEventListener('beforeunload', e => {
-  if (isDirty()) { e.preventDefault(); e.returnValue = ''; }
+  if (isDirty()) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
 });
 
 if (checkSession()) {
