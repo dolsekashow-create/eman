@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
-/* ========== الأساسيات ========== */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
   --gold:#B89B5E; --gold-lt:#D4BC82; --gold-dk:#8C7340;
@@ -141,7 +140,6 @@ main { flex:1; overflow-y:auto; height:100vh; }
   .form-row, .form-row.quad { grid-template-columns:1fr; }
 }
 
-/* Modal */
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:0.2s; }
 .modal-overlay.show { opacity:1; visibility:visible; }
 .modal { background:var(--dark); width:90%; max-width:750px; border:1px solid var(--border); border-radius:8px; padding:24px; max-height:90vh; overflow-y:auto; }
@@ -156,6 +154,12 @@ main { flex:1; overflow-y:auto; height:100vh; }
 .products-table td img { max-width:40px; max-height:40px; object-fit:cover; border-radius:4px; }
 .products-table .actions { display:flex; gap:6px; }
 .bulk-actions { margin:20px 0; display:flex; gap:12px; }
+
+.app-card-preview { display:flex; align-items:center; gap:12px; margin-top:8px; padding:8px; background:rgba(0,0,0,0.2); border-radius:6px; }
+.app-card-preview img { width:60px; height:60px; object-fit:cover; border-radius:4px; border:1px solid var(--border); }
+.app-card-preview .app-info { flex:1; }
+.app-card-preview .app-title { font-weight:600; color:var(--gold); }
+.app-card-preview .app-desc { font-size:0.8rem; opacity:0.7; }
 </style>
 </head>
 <body>
@@ -206,13 +210,10 @@ main { flex:1; overflow-y:auto; height:100vh; }
       </div>
       <div class="status" id="status">جاهز</div>
     </div>
-    <div class="content" id="content">
-      <!-- المحتوى يتولد ديناميكيًا -->
-    </div>
+    <div class="content" id="content"></div>
   </main>
 </div>
 
-<!-- Modal تعديل المنتج (مُوسَّع لـ eman_products) -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <button class="close-modal" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
@@ -246,6 +247,29 @@ main { flex:1; overflow-y:auto; height:100vh; }
       <div class="field"><label>وصف كامل (ألماني) - JSON</label><textarea id="editLongDe" rows="4"></textarea></div>
       <div class="modal-actions">
         <button type="button" class="btn secondary" onclick="closeEditModal()">إلغاء</button>
+        <button type="submit" class="btn"><i class="fas fa-save"></i> حفظ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="appModal">
+  <div class="modal">
+    <button class="close-modal" onclick="closeAppModal()"><i class="fas fa-times"></i></button>
+    <h3><i class="fas fa-edit"></i> <span id="appModalTitle">إضافة استخدام</span></h3>
+    <form id="appForm">
+      <input type="hidden" id="appEditIndex" value="-1" />
+      <div class="field lang-ltr"><label>صورة الاستخدام (رابط)</label><input type="text" id="appImage" placeholder="https://..." /></div>
+      <div class="field"><label>العنوان (عربي)</label><input type="text" id="appTitleAr" required /></div>
+      <div class="field"><label>العنوان (إنجليزي)</label><input type="text" id="appTitleEn" required /></div>
+      <div class="field"><label>العنوان (بولندي)</label><input type="text" id="appTitlePl" /></div>
+      <div class="field"><label>العنوان (ألماني)</label><input type="text" id="appTitleDe" /></div>
+      <div class="field"><label>الوصف (عربي)</label><textarea id="appDescAr" rows="2"></textarea></div>
+      <div class="field"><label>الوصف (إنجليزي)</label><textarea id="appDescEn" rows="2"></textarea></div>
+      <div class="field"><label>الوصف (بولندي)</label><textarea id="appDescPl" rows="2"></textarea></div>
+      <div class="field"><label>الوصف (ألماني)</label><textarea id="appDescDe" rows="2"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" onclick="closeAppModal()">إلغاء</button>
         <button type="submit" class="btn"><i class="fas fa-save"></i> حفظ</button>
       </div>
     </form>
@@ -331,16 +355,16 @@ const DEFAULT_CONTENT = {
     { icon:"fas fa-industry", title:{pl:"Zastosowanie",en:"Application",de:"Anwendung",ar:"الاستخدام"}, desc:{pl:"Wg końcowego użycia",en:"Per end-use",de:"Je nach Anwendung",ar:"حسب الاستخدام النهائي"} }
   ],
   applications: [
-    { title:{pl:"Tworzywa i Masterbatch",en:"Plastics & Masterbatch",de:"Kunststoffe",ar:"البلاستيك والمسترباتش"}, desc:{pl:"Stosowany w PVC, PE, PP.",en:"Used in PVC, PE, PP.",de:"In PVC, PE, PP.",ar:"تُستخدم في PVC وPE وPP."} },
-    { title:{pl:"Farby i powłoki",en:"Paints & Coatings",de:"Farben",ar:"الدهانات والطلاءات"}, desc:{pl:"Formulacje farb.",en:"Paint formulations.",de:"Farbformulierungen.",ar:"تدخل في تركيبات الدهانات."} },
-    { title:{pl:"Papier i karton",en:"Paper & Cardboard",de:"Papier",ar:"الورق والكرتون"}, desc:{pl:"Poprawia jasność.",en:"Improves brightness.",de:"Verbessert Helligkeit.",ar:"تُحسّن السطوع والنعومة."} },
-    { title:{pl:"Guma",en:"Rubber",de:"Gummi",ar:"المطاط"}, desc:{pl:"Mieszanki gumowe.",en:"Rubber compounds.",de:"Gummimischungen.",ar:"تدخل في مركبات المطاط."} },
-    { title:{pl:"Kleje i uszczelniacze",en:"Adhesives & Sealants",de:"Klebstoffe",ar:"المواد اللاصقة"}, desc:{pl:"Formulacje klejów.",en:"Adhesive formulations.",de:"Klebstoffformulierungen.",ar:"تركيبات المواد اللاصقة."} },
-    { title:{pl:"Materiały budowlane",en:"Building Materials",de:"Baumaterialien",ar:"مواد البناء"}, desc:{pl:"Aplikacje budowlane.",en:"Construction applications.",de:"Bauanwendungen.",ar:"تستخدم في تطبيقات البناء."} },
-    { title:{pl:"Cegła biała",en:"White Brick",de:"Kalksandstein",ar:"الطوب الأبيض"}, desc:{pl:"Produkcja cegły białej.",en:"White brick production.",de:"Kalksandsteinherstellung.",ar:"تدخل في تطبيقات الطوب الأبيض."} },
-    { title:{pl:"Pasze i drób",en:"Feed & Poultry",de:"Futtermittel",ar:"الأعلاف والدواجن"}, desc:{pl:"Źródło wapnia.",en:"Calcium source.",de:"Calciumquelle.",ar:"مصدر معدني للكالسيوم."} },
-    { title:{pl:"Farmacja i żywność",en:"Pharma & Food",de:"Pharma",ar:"الصناعات الدوائية"}, desc:{pl:"Wysoka czystość.",en:"High purity.",de:"Hochrein.",ar:"درجات عالية النقاوة."} },
-    { title:{pl:"Pielęgnacja",en:"Personal Care",de:"Körperpflege",ar:"العناية الشخصية"}, desc:{pl:"Klasy pielęgnacyjne.",en:"Personal care grades.",de:"Pflegequalitäten.",ar:"درجات للعناية الشخصية."} }
+    { image: "https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?w=800&q=80", title:{pl:"Tworzywa i Masterbatch",en:"Plastics & Masterbatch",de:"Kunststoffe",ar:"البلاستيك والمسترباتش"}, desc:{pl:"Stosowany w PVC, PE, PP.",en:"Used in PVC, PE, PP.",de:"In PVC, PE, PP.",ar:"تُستخدم في PVC وPE وPP."} },
+    { image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80", title:{pl:"Farby i powłoki",en:"Paints & Coatings",de:"Farben",ar:"الدهانات والطلاءات"}, desc:{pl:"Formulacje farb.",en:"Paint formulations.",de:"Farbformulierungen.",ar:"تدخل في تركيبات الدهانات."} },
+    { image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80", title:{pl:"Papier i karton",en:"Paper & Cardboard",de:"Papier",ar:"الورق والكرتون"}, desc:{pl:"Poprawia jasność.",en:"Improves brightness.",de:"Verbessert Helligkeit.",ar:"تُحسّن السطوع والنعومة."} },
+    { image: "https://images.unsplash.com/photo-1593444619569-52f84a0c9b3c?w=800&q=80", title:{pl:"Guma",en:"Rubber",de:"Gummi",ar:"المطاط"}, desc:{pl:"Mieszanki gumowe.",en:"Rubber compounds.",de:"Gummimischungen.",ar:"تدخل في مركبات المطاط."} },
+    { image: "https://images.unsplash.com/photo-1609205405317-13df69c52e4a?w=800&q=80", title:{pl:"Kleje i uszczelniacze",en:"Adhesives & Sealants",de:"Klebstoffe",ar:"المواد اللاصقة"}, desc:{pl:"Formulacje klejów.",en:"Adhesive formulations.",de:"Klebstoffformulierungen.",ar:"تركيبات المواد اللاصقة."} },
+    { image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80", title:{pl:"Materiały budowlane",en:"Building Materials",de:"Baumaterialien",ar:"مواد البناء"}, desc:{pl:"Aplikacje budowlane.",en:"Construction applications.",de:"Bauanwendungen.",ar:"تستخدم في تطبيقات البناء."} },
+    { image: "https://images.unsplash.com/photo-1607400201515-c2c41c07d307?w=800&q=80", title:{pl:"Cegła biała",en:"White Brick",de:"Kalksandstein",ar:"الطوب الأبيض"}, desc:{pl:"Produkcja cegły białej.",en:"White brick production.",de:"Kalksandsteinherstellung.",ar:"تدخل في تطبيقات الطوب الأبيض."} },
+    { image: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=80", title:{pl:"Pasze i drób",en:"Feed & Poultry",de:"Futtermittel",ar:"الأعلاف والدواجن"}, desc:{pl:"Źródło wapnia.",en:"Calcium source.",de:"Calciumquelle.",ar:"مصدر معدني للكالسيوم."} },
+    { image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80", title:{pl:"Farmacja i żywność",en:"Pharma & Food",de:"Pharma",ar:"الصناعات الدوائية"}, desc:{pl:"Wysoka czystość.",en:"High purity.",de:"Hochrein.",ar:"درجات عالية النقاوة."} },
+    { image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80", title:{pl:"Pielęgnacja",en:"Personal Care",de:"Körperpflege",ar:"العناية الشخصية"}, desc:{pl:"Klasy pielęgnacyjne.",en:"Personal care grades.",de:"Pflegequalitäten.",ar:"درجات للعناية الشخصية."} }
   ],
   why_cards: [
     { icon:"fas fa-flag", title:{pl:"Firma polska",en:"Polish company",de:"Polnisches Unternehmen",ar:"شركة بولندية"}, desc:{pl:"Lepsze zrozumienie rynku.",en:"Better market understanding.",de:"Besseres Marktverständnis.",ar:"فهم أفضل للسوق الأوروبي."} },
@@ -386,8 +410,7 @@ const DEFAULT_CONTENT = {
     { pl:"Certificate of Origin", en:"Certificate of Origin", de:"Certificate of Origin", ar:"شهادة المنشأ" }
   ]
 };
-
-/* ============================================================
+  /* ============================================================
    الدولة (State)
 ============================================================ */
 let CONTENT = {};
@@ -516,6 +539,9 @@ function mergeDefaults(existing) {
     }
   }
   merge(merged, existing);
+  if (merged.applications) {
+    merged.applications = merged.applications.map(app => ({ image: app.image || '', title: app.title || {}, desc: app.desc || {} }));
+  }
   return merged;
 }
 
@@ -725,33 +751,34 @@ function renderProduct() {
     </div>`;
 }
 
-// ========= APPS =========
+// ========= APPS (معدلة بالكامل) =========
 function renderApps() {
   let appsHtml = '<div id="appsList" class="item-list">';
-  (CONTENT.applications || []).forEach((a, i) => {
+  const apps = CONTENT.applications || [];
+  apps.forEach((app, i) => {
+    const imageUrl = app.image || '';
+    const titleAr = (app.title && app.title.ar) || '';
     appsHtml += `
       <div class="dyn-item">
         <div class="dyn-item-head">
           <div class="num">استخدام #${i+1}</div>
           <div class="actions">
             ${i>0 ? `<button class="icon-btn up" onclick="moveItem('applications',${i},-1)"><i class="fas fa-arrow-up"></i></button>`:''}
-            ${i<CONTENT.applications.length-1 ? `<button class="icon-btn down" onclick="moveItem('applications',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
+            ${i<apps.length-1 ? `<button class="icon-btn down" onclick="moveItem('applications',${i},1)"><i class="fas fa-arrow-down"></i></button>`:''}
+            <button class="icon-btn" onclick="editApp(${i})"><i class="fas fa-edit"></i></button>
             <button class="icon-btn del" onclick="deleteItem('applications',${i})"><i class="fas fa-trash"></i></button>
           </div>
         </div>
-        <div class="field"><label>العنوان (4 لغات)</label>
-          <div class="form-row quad">
-            ${LANGS.map(l=>`<input data-array="applications.${i}.title.${l.code}" value="${((a.title||{})[l.code]||'').replace(/"/g,'&quot;')}" placeholder="${l.name}"/>`).join('')}
-          </div>
-        </div>
-        <div class="field"><label>الوصف (4 لغات)</label>
-          <div class="form-row quad">
-            ${LANGS.map(l=>`<textarea data-array="applications.${i}.desc.${l.code}" placeholder="${l.name}">${((a.desc||{})[l.code]||'').replace(/</g,'&lt;')}</textarea>`).join('')}
+        <div class="app-card-preview">
+          ${imageUrl ? `<img src="${imageUrl}" onerror="this.style.display='none'">` : '<div style="width:60px;height:60px;background:#333;border-radius:4px;display:flex;align-items:center;justify-content:center"><i class="fas fa-image" style="opacity:0.5"></i></div>'}
+          <div class="app-info">
+            <div class="app-title">${titleAr || 'بدون عنوان'}</div>
+            <div class="app-desc">${(app.desc && app.desc.ar) ? app.desc.ar.substring(0,60)+'...' : ''}</div>
           </div>
         </div>
       </div>`;
   });
-  appsHtml += '</div><button class="add-btn" onclick="addApp()"><i class="fas fa-plus"></i> إضافة استخدام</button>';
+  appsHtml += '</div><button class="add-btn" onclick="addNewApp()"><i class="fas fa-plus"></i> إضافة استخدام جديد</button>';
 
   return `
     <div class="card">
@@ -763,6 +790,73 @@ function renderApps() {
       <h3><i class="fas fa-industry"></i> بطاقات الاستخدامات الصناعية</h3>
       ${appsHtml}
     </div>`;
+}
+
+function addNewApp() {
+  $('#appModalTitle').textContent = 'إضافة استخدام جديد';
+  $('#appEditIndex').value = '-1';
+  $('#appImage').value = '';
+  $('#appTitleAr').value = '';
+  $('#appTitleEn').value = '';
+  $('#appTitlePl').value = '';
+  $('#appTitleDe').value = '';
+  $('#appDescAr').value = '';
+  $('#appDescEn').value = '';
+  $('#appDescPl').value = '';
+  $('#appDescDe').value = '';
+  $('#appModal').classList.add('show');
+}
+
+function editApp(index) {
+  const app = CONTENT.applications[index];
+  if (!app) return;
+  $('#appModalTitle').textContent = 'تعديل الاستخدام';
+  $('#appEditIndex').value = index;
+  $('#appImage').value = app.image || '';
+  $('#appTitleAr').value = app.title?.ar || '';
+  $('#appTitleEn').value = app.title?.en || '';
+  $('#appTitlePl').value = app.title?.pl || '';
+  $('#appTitleDe').value = app.title?.de || '';
+  $('#appDescAr').value = app.desc?.ar || '';
+  $('#appDescEn').value = app.desc?.en || '';
+  $('#appDescPl').value = app.desc?.pl || '';
+  $('#appDescDe').value = app.desc?.de || '';
+  $('#appModal').classList.add('show');
+}
+
+function closeAppModal() {
+  $('#appModal').classList.remove('show');
+}
+
+function saveApp(e) {
+  e.preventDefault();
+  const index = parseInt($('#appEditIndex').value);
+  const newApp = {
+    image: $('#appImage').value.trim(),
+    title: {
+      ar: $('#appTitleAr').value.trim(),
+      en: $('#appTitleEn').value.trim(),
+      pl: $('#appTitlePl').value.trim(),
+      de: $('#appTitleDe').value.trim()
+    },
+    desc: {
+      ar: $('#appDescAr').value.trim(),
+      en: $('#appDescEn').value.trim(),
+      pl: $('#appDescPl').value.trim(),
+      de: $('#appDescDe').value.trim()
+    }
+  };
+
+  if (!CONTENT.applications) CONTENT.applications = [];
+  if (index === -1) {
+    CONTENT.applications.push(newApp);
+  } else {
+    CONTENT.applications[index] = newApp;
+  }
+  updateSaveBar();
+  renderPage('apps');
+  closeAppModal();
+  toast(index === -1 ? 'تمت الإضافة' : 'تم التعديل');
 }
 
 // ========= WHY =========
@@ -1092,7 +1186,7 @@ async function resetDefaults() {
 }
 
 /* ============================================================
-   PRODUCTS MANAGEMENT (معدلة لـ eman_products)
+   PRODUCTS MANAGEMENT (eman_products)
 ============================================================ */
 async function loadProducts() {
   try {
@@ -1324,7 +1418,6 @@ function deleteItem(arrKey, idx) {
 
 function addVideo() { if (!CONTENT.videos) CONTENT.videos = []; CONTENT.videos.push(""); updateSaveBar(); renderPage('hero'); }
 function addSpec() { if (!CONTENT.specs) CONTENT.specs = []; CONTENT.specs.push({ icon:"fas fa-star", title:{pl:"",en:"",de:"",ar:""}, desc:{pl:"",en:"",de:"",ar:""} }); updateSaveBar(); renderPage('product'); }
-function addApp() { if (!CONTENT.applications) CONTENT.applications = []; CONTENT.applications.push({ title:{pl:"",en:"",de:"",ar:""}, desc:{pl:"",en:"",de:"",ar:""} }); updateSaveBar(); renderPage('apps'); }
 function addWhy() { if (!CONTENT.why_cards) CONTENT.why_cards = []; CONTENT.why_cards.push({ icon:"fas fa-star", title:{pl:"",en:"",de:"",ar:""}, desc:{pl:"",en:"",de:"",ar:""} }); updateSaveBar(); renderPage('why'); }
 function addLogiStage() { if (!CONTENT.logi_stages) CONTENT.logi_stages = []; CONTENT.logi_stages.push({pl:"",en:"",de:"",ar:""}); updateSaveBar(); renderPage('logistics'); }
 function addLogiPack() { if (!CONTENT.logi_packaging) CONTENT.logi_packaging = []; CONTENT.logi_packaging.push({pl:"",en:"",de:"",ar:""}); updateSaveBar(); renderPage('logistics'); }
@@ -1336,7 +1429,6 @@ window.moveItem = moveItem;
 window.deleteItem = deleteItem;
 window.addVideo = addVideo;
 window.addSpec = addSpec;
-window.addApp = addApp;
 window.addWhy = addWhy;
 window.addLogiStage = addLogiStage;
 window.addLogiPack = addLogiPack;
@@ -1354,6 +1446,10 @@ window.deleteProduct = deleteProduct;
 window.deleteFirst16Products = deleteFirst16Products;
 window.openEditModal = openEditModal;
 window.closeEditModal = closeEditModal;
+window.addNewApp = addNewApp;
+window.editApp = editApp;
+window.closeAppModal = closeAppModal;
+window.saveApp = saveApp;
 
 /* ============================================================
    INIT
@@ -1374,6 +1470,7 @@ $('#btnSave').addEventListener('click', saveContent);
 $('#btnDiscard').addEventListener('click', discardChanges);
 $('#menuToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
 $('#editProductForm').addEventListener('submit', saveProduct);
+$('#appForm').addEventListener('submit', saveApp);
 $$('.sb-item').forEach(el => el.addEventListener('click', () => showPage(el.dataset.page)));
 
 window.addEventListener('beforeunload', e => {
