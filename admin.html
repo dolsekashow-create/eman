@@ -509,6 +509,7 @@ function renderProducts() {
 function newProduct() {
   EDITING_PRODUCT = {
     id: null, slug:'', category:'industrial_minerals', icon:'fas fa-cube', image:'',
+    gallery: [],
     sort_order: (PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.sort_order||0))+1 : 1),
     is_active: true,
     name: {pl:'',en:'',de:'',ar:''},
@@ -529,6 +530,7 @@ function editProduct(id) {
   });
   if (!EDITING_PRODUCT.name) EDITING_PRODUCT.name = {};
   if (!EDITING_PRODUCT.short_desc) EDITING_PRODUCT.short_desc = {};
+  if (!Array.isArray(EDITING_PRODUCT.gallery)) EDITING_PRODUCT.gallery = [];
   openProductModal('تعديل المنتج');
   $('#btnDeleteProduct').style.display = 'inline-block';
 }
@@ -572,6 +574,13 @@ function renderProductForm() {
 
     ${p.image ? `<img src="${safe(p.image)}" style="max-width:200px;margin-bottom:16px;border:1px solid var(--border);border-radius:4px" onerror="this.style.display='none'"/>` : ''}
 
+    <div class="card" style="background:#0a0a0a;margin-bottom:14px"><h3 style="margin-bottom:10px">
+      <i class="fas fa-images"></i> معرض الصور <small>صور إضافية تظهر في صفحة المنتج (اختياري)</small>
+    </h3>
+      <div id="galleryList">${renderGalleryList()}</div>
+      <button class="add-btn" onclick="addGalleryImage()"><i class="fas fa-plus"></i> إضافة صورة للمعرض</button>
+    </div>
+
     <div class="card" style="background:#0a0a0a;margin-bottom:14px"><h3 style="margin-bottom:10px">اسم المنتج (4 لغات)</h3>
       <div class="form-row quad">
         ${LANGS.map(l=>`<div class="field"><label><small>${l.name}</small></label><input id="pName_${l.code}" value="${safe(p.name?.[l.code])}"/></div>`).join('')}
@@ -613,12 +622,30 @@ function renderSectionList(lang) {
         <button class="icon-btn del" onclick="deleteListItem('${lang}',${i},${j})"><i class="fas fa-times"></i></button>
       </div>`).join('');
       body = `${items}<button class="btn small secondary" onclick="addListItem('${lang}',${i})"><i class="fas fa-plus"></i> عنصر</button>`;
+    } else if (s.type === 'uses') {
+      const items = (s.items||[]).map((u, j) => `<div style="background:#050505;padding:12px;border:1px solid var(--border);border-radius:4px;margin-bottom:10px">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          ${u.image ? `<img src="${safe(u.image)}" style="width:70px;height:70px;object-fit:cover;border-radius:4px;flex-shrink:0" onerror="this.style.display='none'"/>` : `<div style="width:70px;height:70px;background:#1a1a1a;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:0.5"><i class="fas fa-image"></i></div>`}
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <input placeholder="عنوان الاستخدام" value="${safe(u.title)}" oninput="updateUseItem('${lang}',${i},${j},'title',this.value)" style="font-weight:600"/>
+            <input placeholder="رابط الصورة (URL)" value="${safe(u.image)}" oninput="updateUseItem('${lang}',${i},${j},'image',this.value)" style="direction:ltr;text-align:left;font-size:0.78rem"/>
+            <textarea placeholder="وصف الاستخدام" oninput="updateUseItem('${lang}',${i},${j},'desc',this.value)" style="min-height:50px;font-size:0.85rem">${safe(u.desc)}</textarea>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            ${j>0 ? `<button class="icon-btn" onclick="moveUseItem('${lang}',${i},${j},-1)"><i class="fas fa-arrow-up"></i></button>` : ''}
+            ${j<(s.items||[]).length-1 ? `<button class="icon-btn" onclick="moveUseItem('${lang}',${i},${j},1)"><i class="fas fa-arrow-down"></i></button>` : ''}
+            <button class="icon-btn del" onclick="deleteUseItem('${lang}',${i},${j})"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      </div>`).join('');
+      body = `${items}<button class="btn small secondary" onclick="addUseItem('${lang}',${i})"><i class="fas fa-plus"></i> إضافة استخدام</button>`;
     }
     return `<div class="sec-editor">
       <div class="sec-editor-head">
         <select onchange="changeSectionType('${lang}',${i},this.value)">
           <option value="text" ${s.type==='text'?'selected':''}>نص</option>
           <option value="list" ${s.type==='list'?'selected':''}>قائمة</option>
+          <option value="uses" ${s.type==='uses'?'selected':''}>استخدامات (كروت بصور)</option>
           <option value="note" ${s.type==='note'?'selected':''}>ملاحظة (إطار ذهبي)</option>
         </select>
         <input placeholder="عنوان القسم (اختياري)" value="${safe(s.heading)}" oninput="updateSection('${lang}',${i},'heading',this.value)" style="flex:1"/>
@@ -657,6 +684,7 @@ function changeSectionType(lang, i, type) {
   const s = EDITING_PRODUCT.long_content[lang].sections[i];
   s.type = type;
   if (type === 'list' && !s.items) s.items = [''];
+  if (type === 'uses' && !s.items) s.items = [{ title:'', desc:'', image:'' }];
   refreshSectionList(lang);
 }
 function updateSection(lang, i, field, val) {
@@ -675,6 +703,71 @@ function deleteListItem(lang, i, j) {
   EDITING_PRODUCT.long_content[lang].sections[i].items.splice(j, 1);
   refreshSectionList(lang);
 }
+
+// دوال معرض الصور (gallery)
+function renderGalleryList() {
+  const gallery = EDITING_PRODUCT?.gallery || [];
+  if (!gallery.length) return '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:16px;font-size:0.82rem">مفيش صور - اضغط الزر تحت</p>';
+  return gallery.map((src, i) => `<div style="background:#050505;padding:10px;border:1px solid var(--border);border-radius:4px;margin-bottom:8px;display:flex;gap:10px;align-items:center">
+    ${src ? `<img src="${safe(src)}" style="width:70px;height:70px;object-fit:cover;border-radius:4px;flex-shrink:0" onerror="this.style.display='none'"/>` : `<div style="width:70px;height:70px;background:#1a1a1a;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:0.5"><i class="fas fa-image"></i></div>`}
+    <input placeholder="رابط الصورة" value="${safe(src)}" oninput="updateGalleryImage(${i}, this.value)" style="direction:ltr;text-align:left;flex:1"/>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      ${i>0 ? `<button class="icon-btn" onclick="moveGalleryImage(${i},-1)"><i class="fas fa-arrow-up"></i></button>` : ''}
+      ${i<gallery.length-1 ? `<button class="icon-btn" onclick="moveGalleryImage(${i},1)"><i class="fas fa-arrow-down"></i></button>` : ''}
+      <button class="icon-btn del" onclick="deleteGalleryImage(${i})"><i class="fas fa-trash"></i></button>
+    </div>
+  </div>`).join('');
+}
+function addGalleryImage() {
+  if (!EDITING_PRODUCT.gallery) EDITING_PRODUCT.gallery = [];
+  EDITING_PRODUCT.gallery.push('');
+  refreshGallery();
+}
+function updateGalleryImage(i, val) {
+  if (!EDITING_PRODUCT.gallery) EDITING_PRODUCT.gallery = [];
+  EDITING_PRODUCT.gallery[i] = val;
+  // بس preview بيتحدث بعد blur, مش بالـ live input
+}
+function deleteGalleryImage(i) {
+  EDITING_PRODUCT.gallery.splice(i, 1);
+  refreshGallery();
+}
+function moveGalleryImage(i, dir) {
+  const arr = EDITING_PRODUCT.gallery;
+  const ni = i + dir;
+  if (ni<0 || ni>=arr.length) return;
+  [arr[i], arr[ni]] = [arr[ni], arr[i]];
+  refreshGallery();
+}
+function refreshGallery() {
+  const el = document.getElementById('galleryList');
+  if (el) el.innerHTML = renderGalleryList();
+}
+
+// دوال لعناصر الـ uses (بها صور)
+function addUseItem(lang, i) {
+  const s = EDITING_PRODUCT.long_content[lang].sections[i];
+  if (!s.items) s.items = [];
+  s.items.push({ title:'', desc:'', image:'' });
+  refreshSectionList(lang);
+}
+function updateUseItem(lang, i, j, field, val) {
+  if (!EDITING_PRODUCT.long_content[lang].sections[i].items[j]) EDITING_PRODUCT.long_content[lang].sections[i].items[j] = {};
+  EDITING_PRODUCT.long_content[lang].sections[i].items[j][field] = val;
+  // لو غيّر صورة، نعيد الرسم عشان تتحدث الـ preview
+  if (field === 'image') refreshSectionList(lang);
+}
+function deleteUseItem(lang, i, j) {
+  EDITING_PRODUCT.long_content[lang].sections[i].items.splice(j, 1);
+  refreshSectionList(lang);
+}
+function moveUseItem(lang, i, j, dir) {
+  const arr = EDITING_PRODUCT.long_content[lang].sections[i].items;
+  const ni = j + dir;
+  if (ni<0 || ni>=arr.length) return;
+  [arr[j], arr[ni]] = [arr[ni], arr[j]];
+  refreshSectionList(lang);
+}
 function refreshSectionList(lang) {
   const el = document.getElementById('secList_'+lang);
   if (el) el.innerHTML = renderSectionList(lang);
@@ -691,6 +784,7 @@ async function saveProduct() {
     slug,
     icon: $('#pIcon').value.trim() || 'fas fa-cube',
     image: $('#pImage').value.trim() || null,
+    gallery: (p.gallery || []).filter(g => g && g.trim()),
     category: $('#pCategory').value,
     sort_order: parseInt($('#pSort').value) || 0,
     is_active: $('#pActive').value === 'true',
@@ -1012,6 +1106,14 @@ window.updateSection = updateSection;
 window.addListItem = addListItem;
 window.updateListItem = updateListItem;
 window.deleteListItem = deleteListItem;
+window.addUseItem = addUseItem;
+window.updateUseItem = updateUseItem;
+window.deleteUseItem = deleteUseItem;
+window.moveUseItem = moveUseItem;
+window.addGalleryImage = addGalleryImage;
+window.updateGalleryImage = updateGalleryImage;
+window.deleteGalleryImage = deleteGalleryImage;
+window.moveGalleryImage = moveGalleryImage;
 window.markRead = markRead;
 window.delMsg = delMsg;
 window.setFilter = setFilter;
