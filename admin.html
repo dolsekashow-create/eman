@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
+/* ========== الأساسيات ========== */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
   --gold:#B89B5E; --gold-lt:#D4BC82; --gold-dk:#8C7340;
@@ -143,7 +144,7 @@ main { flex:1; overflow-y:auto; height:100vh; }
 /* Modal */
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:0.2s; }
 .modal-overlay.show { opacity:1; visibility:visible; }
-.modal { background:var(--dark); width:90%; max-width:700px; border:1px solid var(--border); border-radius:8px; padding:24px; max-height:90vh; overflow-y:auto; }
+.modal { background:var(--dark); width:90%; max-width:750px; border:1px solid var(--border); border-radius:8px; padding:24px; max-height:90vh; overflow-y:auto; }
 .modal h3 { color:var(--gold); margin-bottom:20px; font-size:1.1rem; }
 .modal-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:24px; }
 .close-modal { background:transparent; border:none; color:rgba(255,255,255,0.5); font-size:1.2rem; cursor:pointer; float:left; }
@@ -211,6 +212,7 @@ main { flex:1; overflow-y:auto; height:100vh; }
   </main>
 </div>
 
+<!-- Modal تعديل المنتج (مُوسَّع لـ eman_products) -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <button class="close-modal" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
@@ -219,9 +221,17 @@ main { flex:1; overflow-y:auto; height:100vh; }
       <input type="hidden" id="editProductId" />
       <div class="form-row">
         <div class="field lang-ltr"><label>Slug (معرف فريد)</label><input type="text" id="editSlug" required /></div>
-        <div class="field"><label>الأيقونة <small>مثال: fas fa-cube</small></label><input type="text" id="editIcon" /></div>
+        <div class="field"><label>الفئة (Category)</label><input type="text" id="editCategory" placeholder="industrial_minerals / natural_stone" /></div>
       </div>
-      <div class="field lang-ltr"><label>صورة المنتج (رابط)</label><input type="text" id="editImage" /></div>
+      <div class="form-row">
+        <div class="field"><label>الأيقونة</label><input type="text" id="editIcon" /></div>
+        <div class="field lang-ltr"><label>صورة المنتج (رابط)</label><input type="text" id="editImage" /></div>
+      </div>
+      <div class="field lang-ltr"><label>معرض الصور (JSON) - اختياري</label><textarea id="editGallery" rows="2" placeholder='["url1","url2"]'></textarea></div>
+      <div class="form-row">
+        <div class="field"><label>ترتيب الفرز</label><input type="number" id="editSortOrder" value="0" /></div>
+        <div class="field"><label>نشط</label><select id="editIsActive"><option value="true">نعم</option><option value="false">لا</option></select></div>
+      </div>
       <div class="field"><label>الاسم (عربي)</label><input type="text" id="editNameAr" required /></div>
       <div class="field"><label>الاسم (إنجليزي)</label><input type="text" id="editNameEn" required /></div>
       <div class="field"><label>الاسم (بولندي)</label><input type="text" id="editNamePl" /></div>
@@ -230,10 +240,10 @@ main { flex:1; overflow-y:auto; height:100vh; }
       <div class="field"><label>وصف مختصر (إنجليزي)</label><textarea id="editShortEn" rows="2"></textarea></div>
       <div class="field"><label>وصف مختصر (بولندي)</label><textarea id="editShortPl" rows="2"></textarea></div>
       <div class="field"><label>وصف مختصر (ألماني)</label><textarea id="editShortDe" rows="2"></textarea></div>
-      <div class="field"><label>وصف كامل (عربي)</label><textarea id="editDescAr" rows="4"></textarea></div>
-      <div class="field"><label>وصف كامل (إنجليزي)</label><textarea id="editDescEn" rows="4"></textarea></div>
-      <div class="field"><label>وصف كامل (بولندي)</label><textarea id="editDescPl" rows="4"></textarea></div>
-      <div class="field"><label>وصف كامل (ألماني)</label><textarea id="editDescDe" rows="4"></textarea></div>
+      <div class="field"><label>وصف كامل (عربي) - JSON</label><textarea id="editLongAr" rows="4" placeholder='{"intro":"...", "sections":[...]}'></textarea></div>
+      <div class="field"><label>وصف كامل (إنجليزي) - JSON</label><textarea id="editLongEn" rows="4"></textarea></div>
+      <div class="field"><label>وصف كامل (بولندي) - JSON</label><textarea id="editLongPl" rows="4"></textarea></div>
+      <div class="field"><label>وصف كامل (ألماني) - JSON</label><textarea id="editLongDe" rows="4"></textarea></div>
       <div class="modal-actions">
         <button type="button" class="btn secondary" onclick="closeEditModal()">إلغاء</button>
         <button type="submit" class="btn"><i class="fas fa-save"></i> حفظ</button>
@@ -1082,11 +1092,11 @@ async function resetDefaults() {
 }
 
 /* ============================================================
-   PRODUCTS MANAGEMENT
+   PRODUCTS MANAGEMENT (معدلة لـ eman_products)
 ============================================================ */
 async function loadProducts() {
   try {
-    const { data, error } = await sb.from('products').select('*').order('id', { ascending: true });
+    const { data, error } = await sb.from('eman_products').select('*').order('sort_order', { ascending: true });
     if (error) throw error;
     PRODUCTS = data || [];
     updateProductsBadge();
@@ -1108,18 +1118,18 @@ function updateProductsBadge() {
 function renderProductsPage() {
   let html = `
     <div class="card">
-      <h3><i class="fas fa-boxes"></i> إدارة المنتجات</h3>
+      <h3><i class="fas fa-boxes"></i> إدارة المنتجات (eman_products)</h3>
       <div class="bulk-actions">
         <button class="btn danger" onclick="deleteFirst16Products()"><i class="fas fa-trash"></i> حذف أول 16 منتج</button>
         <button class="btn secondary" onclick="loadProductsAndRender()"><i class="fas fa-sync-alt"></i> تحديث</button>
       </div>
       <div class="table-wrapper">
         <table class="products-table">
-          <thead><tr><th>ID</th><th>صورة</th><th>الاسم (AR)</th><th>Slug</th><th>أيقونة</th><th>إجراءات</th></tr></thead>
+          <thead><tr><th>ID</th><th>صورة</th><th>الاسم (AR)</th><th>Slug</th><th>الفئة</th><th>ترتيب</th><th>إجراءات</th></tr></thead>
           <tbody id="productsTableBody">
   `;
   if (PRODUCTS.length === 0) {
-    html += `<tr><td colspan="6" style="text-align:center;padding:30px;">لا توجد منتجات</td></tr>`;
+    html += `<tr><td colspan="7" style="text-align:center;padding:30px;">لا توجد منتجات</td></tr>`;
   } else {
     PRODUCTS.forEach(p => {
       const nameAr = (p.name && p.name.ar) || '-';
@@ -1130,7 +1140,8 @@ function renderProductsPage() {
           <td>${image ? `<img src="${image}" onerror="this.style.display='none'">` : '-'}</td>
           <td>${nameAr}</td>
           <td>${p.slug || '-'}</td>
-          <td><i class="${p.icon || ''}" style="color:var(--gold)"></i> ${p.icon || '-'}</td>
+          <td>${p.category || '-'}</td>
+          <td>${p.sort_order || 0}</td>
           <td class="actions">
             <button class="icon-btn" onclick="openEditModal(${p.id})" title="تعديل"><i class="fas fa-edit"></i></button>
             <button class="icon-btn del" onclick="deleteProduct(${p.id})" title="حذف"><i class="fas fa-trash"></i></button>
@@ -1153,7 +1164,7 @@ async function loadProductsAndRender() {
 async function deleteProduct(id) {
   if (!confirm('هل تريد حذف هذا المنتج؟')) return;
   try {
-    const { error } = await sb.from('products').delete().eq('id', id);
+    const { error } = await sb.from('eman_products').delete().eq('id', id);
     if (error) throw error;
     toast('تم حذف المنتج');
     await loadProductsAndRender();
@@ -1163,16 +1174,16 @@ async function deleteProduct(id) {
 }
 
 async function deleteFirst16Products() {
-  if (!confirm('سيتم حذف أول 16 منتج (حسب ID) نهائياً. متأكد؟')) return;
+  if (!confirm('سيتم حذف أول 16 منتج (حسب sort_order) نهائياً. متأكد؟')) return;
   try {
-    const { data, error } = await sb.from('products').select('id').order('id', { ascending: true }).limit(16);
+    const { data, error } = await sb.from('eman_products').select('id').order('sort_order', { ascending: true }).limit(16);
     if (error) throw error;
     if (!data || data.length === 0) {
       toast('لا توجد منتجات كافية للحذف', 'error');
       return;
     }
     const ids = data.map(p => p.id);
-    const { error: delError } = await sb.from('products').delete().in('id', ids);
+    const { error: delError } = await sb.from('eman_products').delete().in('id', ids);
     if (delError) throw delError;
     toast(`تم حذف ${ids.length} منتج بنجاح`);
     await loadProductsAndRender();
@@ -1186,8 +1197,12 @@ function openEditModal(id) {
   if (!product) return;
   $('#editProductId').value = product.id;
   $('#editSlug').value = product.slug || '';
+  $('#editCategory').value = product.category || '';
   $('#editIcon').value = product.icon || '';
   $('#editImage').value = product.image || '';
+  $('#editGallery').value = JSON.stringify(product.gallery || []);
+  $('#editSortOrder').value = product.sort_order || 0;
+  $('#editIsActive').value = product.is_active ? 'true' : 'false';
   $('#editNameAr').value = product.name?.ar || '';
   $('#editNameEn').value = product.name?.en || '';
   $('#editNamePl').value = product.name?.pl || '';
@@ -1196,10 +1211,11 @@ function openEditModal(id) {
   $('#editShortEn').value = product.short_desc?.en || '';
   $('#editShortPl').value = product.short_desc?.pl || '';
   $('#editShortDe').value = product.short_desc?.de || '';
-  $('#editDescAr').value = product.full_desc?.ar || '';
-  $('#editDescEn').value = product.full_desc?.en || '';
-  $('#editDescPl').value = product.full_desc?.pl || '';
-  $('#editDescDe').value = product.full_desc?.de || '';
+  const long = product.long_content || {};
+  $('#editLongAr').value = JSON.stringify(long.ar || {});
+  $('#editLongEn').value = JSON.stringify(long.en || {});
+  $('#editLongPl').value = JSON.stringify(long.pl || {});
+  $('#editLongDe').value = JSON.stringify(long.de || {});
   $('#editModal').classList.add('show');
 }
 
@@ -1211,10 +1227,26 @@ async function saveProduct(e) {
   e.preventDefault();
   const id = $('#editProductId').value;
   if (!id) return;
+
+  let gallery = [];
+  try { gallery = JSON.parse($('#editGallery').value.trim() || '[]'); } catch(e) { toast('صيغة JSON غير صحيحة للمعرض', 'error'); return; }
+
+  let longAr = {}, longEn = {}, longPl = {}, longDe = {};
+  try {
+    longAr = JSON.parse($('#editLongAr').value.trim() || '{}');
+    longEn = JSON.parse($('#editLongEn').value.trim() || '{}');
+    longPl = JSON.parse($('#editLongPl').value.trim() || '{}');
+    longDe = JSON.parse($('#editLongDe').value.trim() || '{}');
+  } catch(e) { toast('صيغة JSON غير صحيحة في الوصف الكامل', 'error'); return; }
+
   const updates = {
     slug: $('#editSlug').value.trim(),
+    category: $('#editCategory').value.trim(),
     icon: $('#editIcon').value.trim(),
     image: $('#editImage').value.trim(),
+    gallery: gallery,
+    sort_order: parseInt($('#editSortOrder').value) || 0,
+    is_active: $('#editIsActive').value === 'true',
     name: {
       ar: $('#editNameAr').value.trim(),
       en: $('#editNameEn').value.trim(),
@@ -1227,15 +1259,12 @@ async function saveProduct(e) {
       pl: $('#editShortPl').value.trim(),
       de: $('#editShortDe').value.trim()
     },
-    full_desc: {
-      ar: $('#editDescAr').value.trim(),
-      en: $('#editDescEn').value.trim(),
-      pl: $('#editDescPl').value.trim(),
-      de: $('#editDescDe').value.trim()
-    }
+    long_content: { ar: longAr, en: longEn, pl: longPl, de: longDe },
+    updated_at: new Date().toISOString()
   };
+
   try {
-    const { error } = await sb.from('products').update(updates).eq('id', id);
+    const { error } = await sb.from('eman_products').update(updates).eq('id', id);
     if (error) throw error;
     toast('تم حفظ التعديلات');
     closeEditModal();
