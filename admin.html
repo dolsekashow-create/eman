@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
+/* ========== الأساسيات ========== */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
   --gold:#B89B5E; --gold-lt:#D4BC82; --gold-dk:#8C7340;
@@ -77,11 +78,12 @@ main { flex:1; overflow-y:auto; height:100vh; }
 .field textarea { min-height:80px; resize:vertical; line-height:1.7; }
 .field.lang-ltr input, .field.lang-ltr textarea { direction:ltr; text-align:left; }
 
-.lang-tabs { display:flex; gap:4px; margin-bottom:10px; flex-wrap:wrap; }
-.lang-tabs button { padding:5px 12px; background:transparent; color:rgba(255,255,255,0.5); border:1px solid var(--border); font-size:0.75rem; border-radius:4px; transition:0.2s; }
-.lang-tabs button.active { color:var(--gold); border-color:var(--gold); background:rgba(184,155,94,0.08); }
-.lang-pane { display:none; }
-.lang-pane.active { display:block; }
+.image-upload-area { border:2px dashed var(--border); border-radius:8px; padding:20px; text-align:center; cursor:pointer; transition:0.2s; background:#0f0f0f; }
+.image-upload-area:hover { border-color:var(--gold); background:rgba(184,155,94,0.05); }
+.image-upload-area i { font-size:2rem; color:var(--gold); margin-bottom:8px; }
+.image-upload-area .preview-image { max-width:100%; max-height:150px; margin-top:10px; border-radius:6px; display:none; }
+.image-upload-area.has-image .upload-placeholder { display:none; }
+.image-upload-area.has-image .preview-image { display:inline-block; }
 
 .btn { padding:10px 22px; background:var(--gold); color:var(--black); font-weight:700; font-size:0.82rem; letter-spacing:1px; transition:0.2s; border-radius:4px; }
 .btn:hover { background:var(--gold-lt); }
@@ -214,6 +216,7 @@ main { flex:1; overflow-y:auto; height:100vh; }
   </main>
 </div>
 
+<!-- Modal تعديل المنتج (eman_products) -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <button class="close-modal" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
@@ -253,13 +256,30 @@ main { flex:1; overflow-y:auto; height:100vh; }
   </div>
 </div>
 
+<!-- Modal إضافة/تعديل استخدام صناعي (مع رفع صورة) -->
 <div class="modal-overlay" id="appModal">
   <div class="modal">
     <button class="close-modal" onclick="closeAppModal()"><i class="fas fa-times"></i></button>
     <h3><i class="fas fa-edit"></i> <span id="appModalTitle">إضافة استخدام</span></h3>
     <form id="appForm">
       <input type="hidden" id="appEditIndex" value="-1" />
-      <div class="field lang-ltr"><label>صورة الاستخدام (رابط)</label><input type="text" id="appImage" placeholder="https://..." /></div>
+      <input type="hidden" id="appImageUrl" value="" />
+      
+      <!-- منطقة رفع الصورة -->
+      <div class="field">
+        <label>صورة الاستخدام</label>
+        <div class="image-upload-area" id="appImageUploadArea" onclick="document.getElementById('appImageInput').click()">
+          <div class="upload-placeholder">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>اضغط لاختيار صورة</p>
+            <small>JPG, PNG, WEBP (أقصى حجم 5MB)</small>
+          </div>
+          <img class="preview-image" id="appImagePreview" src="" alt="معاينة">
+        </div>
+        <input type="file" id="appImageInput" accept="image/jpeg,image/png,image/webp" style="display:none;">
+        <div id="appImageStatus" style="font-size:0.75rem; margin-top:6px;"></div>
+      </div>
+
       <div class="field"><label>العنوان (عربي)</label><input type="text" id="appTitleAr" required /></div>
       <div class="field"><label>العنوان (إنجليزي)</label><input type="text" id="appTitleEn" required /></div>
       <div class="field"><label>العنوان (بولندي)</label><input type="text" id="appTitlePl" /></div>
@@ -270,7 +290,7 @@ main { flex:1; overflow-y:auto; height:100vh; }
       <div class="field"><label>الوصف (ألماني)</label><textarea id="appDescDe" rows="2"></textarea></div>
       <div class="modal-actions">
         <button type="button" class="btn secondary" onclick="closeAppModal()">إلغاء</button>
-        <button type="submit" class="btn"><i class="fas fa-save"></i> حفظ</button>
+        <button type="submit" class="btn" id="appSaveBtn"><i class="fas fa-save"></i> حفظ</button>
       </div>
     </form>
   </div>
@@ -420,6 +440,7 @@ let MESSAGES = [];
 let MSG_FILTER = 'all';
 let CURRENT_USER = null;
 let PRODUCTS = [];
+let pendingAppImageFile = null; // لتخزين ملف الصورة مؤقتًا قبل الرفع
 
 /* ============================================================
    Utilities
@@ -751,7 +772,7 @@ function renderProduct() {
     </div>`;
 }
 
-// ========= APPS (معدلة بالكامل) =========
+// ========= APPS (معدلة لرفع الصور) =========
 function renderApps() {
   let appsHtml = '<div id="appsList" class="item-list">';
   const apps = CONTENT.applications || [];
@@ -792,10 +813,15 @@ function renderApps() {
     </div>`;
 }
 
+// دوال رفع الصور والمودال
 function addNewApp() {
   $('#appModalTitle').textContent = 'إضافة استخدام جديد';
   $('#appEditIndex').value = '-1';
-  $('#appImage').value = '';
+  $('#appImageUrl').value = '';
+  $('#appImagePreview').src = '';
+  $('#appImageUploadArea').classList.remove('has-image');
+  pendingAppImageFile = null;
+  $('#appImageStatus').textContent = '';
   $('#appTitleAr').value = '';
   $('#appTitleEn').value = '';
   $('#appTitlePl').value = '';
@@ -812,7 +838,17 @@ function editApp(index) {
   if (!app) return;
   $('#appModalTitle').textContent = 'تعديل الاستخدام';
   $('#appEditIndex').value = index;
-  $('#appImage').value = app.image || '';
+  const imageUrl = app.image || '';
+  $('#appImageUrl').value = imageUrl;
+  if (imageUrl) {
+    $('#appImagePreview').src = imageUrl;
+    $('#appImageUploadArea').classList.add('has-image');
+  } else {
+    $('#appImagePreview').src = '';
+    $('#appImageUploadArea').classList.remove('has-image');
+  }
+  pendingAppImageFile = null;
+  $('#appImageStatus').textContent = '';
   $('#appTitleAr').value = app.title?.ar || '';
   $('#appTitleEn').value = app.title?.en || '';
   $('#appTitlePl').value = app.title?.pl || '';
@@ -826,37 +862,130 @@ function editApp(index) {
 
 function closeAppModal() {
   $('#appModal').classList.remove('show');
+  pendingAppImageFile = null;
 }
 
-function saveApp(e) {
-  e.preventDefault();
-  const index = parseInt($('#appEditIndex').value);
-  const newApp = {
-    image: $('#appImage').value.trim(),
-    title: {
-      ar: $('#appTitleAr').value.trim(),
-      en: $('#appTitleEn').value.trim(),
-      pl: $('#appTitlePl').value.trim(),
-      de: $('#appTitleDe').value.trim()
-    },
-    desc: {
-      ar: $('#appDescAr').value.trim(),
-      en: $('#appDescEn').value.trim(),
-      pl: $('#appDescPl').value.trim(),
-      de: $('#appDescDe').value.trim()
-    }
-  };
-
-  if (!CONTENT.applications) CONTENT.applications = [];
-  if (index === -1) {
-    CONTENT.applications.push(newApp);
-  } else {
-    CONTENT.applications[index] = newApp;
+// معالجة اختيار الصورة
+document.addEventListener('DOMContentLoaded', () => {
+  const fileInput = $('#appImageInput');
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      // التحقق من النوع والحجم
+      if (!file.type.startsWith('image/')) {
+        toast('الرجاء اختيار ملف صورة صالح', 'error');
+        fileInput.value = '';
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast('حجم الصورة يجب ألا يتجاوز 5 ميجابايت', 'error');
+        fileInput.value = '';
+        return;
+      }
+      
+      pendingAppImageFile = file;
+      $('#appImageUrl').value = ''; // سنرفعها لاحقًا
+      
+      // عرض معاينة
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        $('#appImagePreview').src = ev.target.result;
+        $('#appImageUploadArea').classList.add('has-image');
+        $('#appImageStatus').textContent = `تم اختيار: ${file.name}`;
+      };
+      reader.readAsDataURL(file);
+    });
   }
-  updateSaveBar();
-  renderPage('apps');
-  closeAppModal();
-  toast(index === -1 ? 'تمت الإضافة' : 'تم التعديل');
+});
+
+// رفع الصورة إلى Supabase Storage
+async function uploadAppImage(file) {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `app-${Date.now()}-${Math.random().toString(36).substring(2,8)}.${fileExt}`;
+  const filePath = `applications/${fileName}`;
+  
+  try {
+    const { data, error } = await sb.storage
+      .from('applications') // اسم bucket
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+    
+    if (error) throw error;
+    
+    // الحصول على الرابط العام
+    const { data: urlData } = sb.storage
+      .from('applications')
+      .getPublicUrl(filePath);
+    
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Upload error:', error);
+    throw new Error('فشل رفع الصورة: ' + error.message);
+  }
+}
+
+async function saveApp(e) {
+  e.preventDefault();
+  const saveBtn = $('#appSaveBtn');
+  const originalText = saveBtn.innerHTML;
+  saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+  saveBtn.disabled = true;
+  
+  try {
+    const index = parseInt($('#appEditIndex').value);
+    let imageUrl = $('#appImageUrl').value.trim();
+    
+    // إذا كان هناك ملف صورة جديد، قم برفعه
+    if (pendingAppImageFile) {
+      try {
+        $('#appImageStatus').textContent = 'جاري رفع الصورة...';
+        imageUrl = await uploadAppImage(pendingAppImageFile);
+        $('#appImageStatus').textContent = 'تم رفع الصورة بنجاح ✓';
+      } catch (uploadError) {
+        toast(uploadError.message, 'error');
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+        return;
+      }
+    }
+    
+    const newApp = {
+      image: imageUrl,
+      title: {
+        ar: $('#appTitleAr').value.trim(),
+        en: $('#appTitleEn').value.trim(),
+        pl: $('#appTitlePl').value.trim(),
+        de: $('#appTitleDe').value.trim()
+      },
+      desc: {
+        ar: $('#appDescAr').value.trim(),
+        en: $('#appDescEn').value.trim(),
+        pl: $('#appDescPl').value.trim(),
+        de: $('#appDescDe').value.trim()
+      }
+    };
+
+    if (!CONTENT.applications) CONTENT.applications = [];
+    if (index === -1) {
+      CONTENT.applications.push(newApp);
+    } else {
+      CONTENT.applications[index] = newApp;
+    }
+    
+    updateSaveBar();
+    renderPage('apps');
+    closeAppModal();
+    toast(index === -1 ? 'تمت الإضافة' : 'تم التعديل');
+  } catch (error) {
+    toast('حدث خطأ: ' + error.message, 'error');
+  } finally {
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
+  }
 }
 
 // ========= WHY =========
