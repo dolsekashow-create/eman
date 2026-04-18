@@ -373,7 +373,10 @@ async function loadContent() {
 
 async function loadProducts() {
   try {
-    const { data } = await sb.from('products').select('*').eq('is_active', true).order('sort_order', { ascending:true });
+    const { data } = await sb.from('eman_products')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
     // الاحتفاظ بآخر منتجين فقط (حذف أول 16 منتج وأي منتجات قبل الأخيرين)
     PRODUCTS = (data || []).slice(-2);
   } catch(e) {
