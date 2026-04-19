@@ -45,6 +45,25 @@ function renderProduct() {
     return;
   }
 
+  // استخدامات المنتج من CONTENT.applications
+  const allApps = EW.getContent().applications || [];
+  const prodApps = allApps.filter(a => a.product_slug === slug);
+  const appsTitle = EW.getLang()==='ar' ? 'الاستخدامات الصناعية' : EW.getLang()==='pl' ? 'Zastosowania Przemysłowe' : EW.getLang()==='de' ? 'Industrielle Anwendungen' : 'Industrial Applications';
+  const appsHtml = prodApps.length ? `
+    <div class="product-section reveal">
+      <h2>${appsTitle}</h2>
+      <div class="uses-grid">
+        ${prodApps.map(u => `
+          <div class="use-card">
+            ${u.image ? `<img class="use-card-img" src="${u.image}" alt="" onerror="this.outerHTML='<div class=\\'use-card-img-placeholder\\'><i class=\\'fas fa-image\\'></i></div>'"/>` : `<div class="use-card-img-placeholder"><i class="fas fa-image"></i></div>`}
+            <div class="use-card-body">
+              <h4>${EW.loc(u.title)||''}</h4>
+              <p>${EW.loc(u.desc)||''}</p>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
   // المحتوى الطويل
   const lc = prod.long_content?.[EW.getLang()] || prod.long_content?.en || prod.long_content?.pl || {};
   const sections = lc.sections || [];
@@ -106,6 +125,7 @@ function renderProduct() {
     <section class="product-body">
       <div class="container" style="max-width:900px">
         ${lc.intro ? `<div class="product-section reveal"><p style="font-size:1rem;line-height:2;color:#333">${lc.intro.replace(/\n/g,'</p><p style="font-size:1rem;line-height:2;color:#333;margin-top:14px">')}</p></div>` : ''}
+        ${appsHtml}
         ${galleryHtml}
         ${sectionsHtml}
         <div style="text-align:center; margin-top:60px">
