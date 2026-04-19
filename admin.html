@@ -582,11 +582,16 @@ function mergeDefaults(existing) {
   const merged = deepClone(DEFAULT_CONTENT);
   function merge(target, source) {
     for (const k in source) {
-      if (source[k] !== null && typeof source[k] === 'object' && !Array.isArray(source[k])) {
-        if (!target[k]) target[k] = {};
-        merge(target[k], source[k]);
+      const sv = source[k];
+      if (sv === null || sv === undefined) continue;
+      if (Array.isArray(sv)) {
+        // لو array من السوبا بيز فاضي → خلي الـ default
+        target[k] = (sv.length > 0) ? sv : (target[k] || sv);
+      } else if (typeof sv === 'object') {
+        if (!target[k] || typeof target[k] !== 'object') target[k] = {};
+        merge(target[k], sv);
       } else {
-        target[k] = source[k];
+        target[k] = sv;
       }
     }
   }
