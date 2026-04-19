@@ -6,8 +6,8 @@
    - Shared navbar/footer rendering
    ============================================================== */
 
-const SUPABASE_URL = 'https://mffpfxglevnwzyanbexr.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_lPa98YbCXdXpGJxitr7nNQ_EC0q_71g';
+const SUPABASE_URL = 'https://pimkilxavjambjbvnbfr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ZY1qjeCgR97DN7z_Zgx3hg_nt-CmAGG';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const LANGS = ['pl','en','de','ar'];
