@@ -29,6 +29,14 @@ const DEFAULT_CONTENT = {
     whatsapp:"48123456789", facebook:"https://facebook.com/emanwarsaw"
   },
   brand: { name:"EMAN WARSAW", subname:"For Trading sp. z o.o." },
+  applications: [
+    { image:"https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?w=800&q=80", title:{pl:"Farby i lakiery",en:"Paints & Coatings",de:"Farben",ar:"الدهانات والطلاء"}, desc:{pl:"Stosowany jako wypełniacz w farbach.",en:"Used as a filler in paints and coatings.",de:"Als Füllstoff in Farben verwendet.",ar:"يُستخدم حشواً في الدهانات والطلاء."} },
+    { image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80", title:{pl:"Tworzywa sztuczne",en:"Plastics",de:"Kunststoffe",ar:"البلاستيك"}, desc:{pl:"Ważny składnik tworzyw sztucznych.",en:"Key component in plastic manufacturing.",de:"Wichtige Komponente bei Kunststoffen.",ar:"مكوّن أساسي في صناعة البلاستيك."} },
+    { image:"https://images.unsplash.com/photo-1607400201515-c2c41c07d307?w=800&q=80", title:{pl:"Materiały budowlane",en:"Building Materials",de:"Baumaterialien",ar:"مواد البناء"}, desc:{pl:"Aplikacje budowlane.",en:"Construction applications.",de:"Bauanwendungen.",ar:"تستخدم في تطبيقات البناء."} },
+    { image:"https://images.unsplash.com/photo-1609205405317-13df69c52e4a?w=800&q=80", title:{pl:"Kleje i uszczelniacze",en:"Adhesives & Sealants",de:"Klebstoffe",ar:"المواد اللاصقة"}, desc:{pl:"Formulacje klejów.",en:"Adhesive formulations.",de:"Klebstoffformulierungen.",ar:"تركيبات المواد اللاصقة."} },
+    { image:"https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=80", title:{pl:"Pasze i drób",en:"Feed & Poultry",de:"Futtermittel",ar:"الأعلاف والدواجن"}, desc:{pl:"Źródło wapnia.",en:"Calcium source for animal feed.",de:"Calciumquelle.",ar:"مصدر معدني للكالسيوم في الأعلاف."} },
+    { image:"https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80", title:{pl:"Farmacja i żywność",en:"Pharma & Food",de:"Pharma",ar:"الصناعات الدوائية"}, desc:{pl:"Wysoka czystość.",en:"High purity pharmaceutical grade.",de:"Hochrein.",ar:"درجات عالية النقاوة للدواء والغذاء."} }
+  ],
   translations: {
     pl: {
       // Navbar
@@ -388,10 +396,17 @@ async function loadProducts() {
 function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
 function mergeDeep(target, source) {
   for (const k in source) {
-    if (source[k] !== null && typeof source[k] === 'object' && !Array.isArray(source[k])) {
-      if (!target[k]) target[k] = {};
-      mergeDeep(target[k], source[k]);
-    } else target[k] = source[k];
+    const sv = source[k];
+    if (sv === null || sv === undefined) continue;
+    // لو array: استخدم البيانات من السوبا بيز بس لو مش فارضة
+    if (Array.isArray(sv)) {
+      target[k] = (sv.length > 0) ? sv : (target[k] || sv);
+    } else if (typeof sv === 'object') {
+      if (!target[k] || typeof target[k] !== 'object') target[k] = {};
+      mergeDeep(target[k], sv);
+    } else {
+      target[k] = sv;
+    }
   }
   return target;
 }
