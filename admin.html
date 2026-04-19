@@ -216,26 +216,55 @@ main { flex:1; overflow-y:auto; height:100vh; }
   </main>
 </div>
 
-<!-- Modal تعديل المنتج (eman_products) -->
+<!-- Modal تعديل/إضافة المنتج (eman_products) -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <button class="close-modal" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
-    <h3><i class="fas fa-edit"></i> تعديل المنتج</h3>
+    <h3><i class="fas fa-edit"></i> <span id="editModalTitle">تعديل المنتج</span></h3>
     <form id="editProductForm">
       <input type="hidden" id="editProductId" />
+      <input type="hidden" id="editProductImageUrl" value="" />
       <div class="form-row">
         <div class="field lang-ltr"><label>Slug (معرف فريد)</label><input type="text" id="editSlug" required /></div>
         <div class="field"><label>الفئة (Category)</label><input type="text" id="editCategory" placeholder="industrial_minerals / natural_stone" /></div>
       </div>
       <div class="form-row">
-        <div class="field"><label>الأيقونة</label><input type="text" id="editIcon" /></div>
-        <div class="field lang-ltr"><label>صورة المنتج (رابط)</label><input type="text" id="editImage" /></div>
-      </div>
-      <div class="field lang-ltr"><label>معرض الصور (JSON) - اختياري</label><textarea id="editGallery" rows="2" placeholder='["url1","url2"]'></textarea></div>
-      <div class="form-row">
+        <div class="field"><label>الأيقونة <small>مثال: fas fa-flask</small></label><input type="text" id="editIcon" /></div>
         <div class="field"><label>ترتيب الفرز</label><input type="number" id="editSortOrder" value="0" /></div>
-        <div class="field"><label>نشط</label><select id="editIsActive"><option value="true">نعم</option><option value="false">لا</option></select></div>
       </div>
+      <!-- رفع صورة المنتج -->
+      <div class="field">
+        <label>صورة المنتج الرئيسية</label>
+        <div class="image-upload-area" id="editProductImageUploadArea" onclick="document.getElementById('editProductImageInput').click()">
+          <div class="upload-placeholder">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>اضغط لرفع صورة</p>
+            <small>JPG, PNG, WEBP (أقصى 5MB)</small>
+          </div>
+          <img class="preview-image" id="editProductImagePreview" src="" alt="معاينة"/>
+        </div>
+        <input type="file" id="editProductImageInput" accept="image/jpeg,image/png,image/webp" style="display:none;">
+        <div id="editProductImageStatus" style="font-size:0.75rem;margin-top:6px;"></div>
+        <div class="field lang-ltr" style="margin-top:8px">
+          <label>أو أدخل رابط الصورة مباشرة</label>
+          <input type="text" id="editImage" placeholder="https://..." oninput="previewProductImageFromUrl(this.value)"/>
+        </div>
+      </div>
+      <!-- رفع صور المعرض -->
+      <div class="field">
+        <label>صور المعرض (gallery) - ارفع صور أو أضف روابط JSON</label>
+        <div id="editGalleryUploadArea" style="border:1px dashed var(--border);border-radius:6px;padding:12px;background:#0f0f0f;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px" id="galleryPreviewList"></div>
+          <button type="button" class="btn secondary small" onclick="document.getElementById('editGalleryFileInput').click()"><i class="fas fa-images"></i> رفع صورة للمعرض</button>
+          <input type="file" id="editGalleryFileInput" accept="image/jpeg,image/png,image/webp" style="display:none;">
+          <div id="editGalleryStatus" style="font-size:0.75rem;margin-top:6px;"></div>
+        </div>
+        <div class="field lang-ltr" style="margin-top:8px">
+          <label>أو أضف روابط JSON للمعرض</label>
+          <textarea id="editGallery" rows="2" placeholder='["url1","url2"]'></textarea>
+        </div>
+      </div>
+      <div class="field"><label>نشط</label><select id="editIsActive"><option value="true">نعم</option><option value="false">لا</option></select></div>
       <div class="field"><label>الاسم (عربي)</label><input type="text" id="editNameAr" required /></div>
       <div class="field"><label>الاسم (إنجليزي)</label><input type="text" id="editNameEn" required /></div>
       <div class="field"><label>الاسم (بولندي)</label><input type="text" id="editNamePl" /></div>
@@ -311,8 +340,8 @@ main { flex:1; overflow-y:auto; height:100vh; }
 /* ============================================================
    SUPABASE CONFIG
 ============================================================ */
-const SUPABASE_URL = 'https://mffpfxglevnwzyanbexr.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_lPa98YbCXdXpGJxitr7nNQ_EC0q_71g';
+const SUPABASE_URL = 'https://pimkilxavjambjbvnbfr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ZY1qjeCgR97DN7z_Zgx3hg_nt-CmAGG';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ============================================================
@@ -441,6 +470,8 @@ let MSG_FILTER = 'all';
 let CURRENT_USER = null;
 let PRODUCTS = [];
 let pendingAppImageFile = null; // لتخزين ملف الصورة مؤقتًا قبل الرفع
+let pendingProductImageFile = null; // صورة المنتج الرئيسية
+let pendingGalleryFiles = []; // صور معرض المنتج
 
 /* ============================================================
    Utilities
@@ -867,28 +898,16 @@ function closeAppModal() {
 
 // معالجة اختيار الصورة
 document.addEventListener('DOMContentLoaded', () => {
+  // === صور الاستخدامات ===
   const fileInput = $('#appImageInput');
   if (fileInput) {
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      
-      // التحقق من النوع والحجم
-      if (!file.type.startsWith('image/')) {
-        toast('الرجاء اختيار ملف صورة صالح', 'error');
-        fileInput.value = '';
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        toast('حجم الصورة يجب ألا يتجاوز 5 ميجابايت', 'error');
-        fileInput.value = '';
-        return;
-      }
-      
+      if (!file.type.startsWith('image/')) { toast('الرجاء اختيار ملف صورة صالح', 'error'); fileInput.value=''; return; }
+      if (file.size > 5*1024*1024) { toast('حجم الصورة يجب ألا يتجاوز 5 ميجابايت', 'error'); fileInput.value=''; return; }
       pendingAppImageFile = file;
-      $('#appImageUrl').value = ''; // سنرفعها لاحقًا
-      
-      // عرض معاينة
+      $('#appImageUrl').value = '';
       const reader = new FileReader();
       reader.onload = (ev) => {
         $('#appImagePreview').src = ev.target.result;
@@ -896,6 +915,50 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#appImageStatus').textContent = `تم اختيار: ${file.name}`;
       };
       reader.readAsDataURL(file);
+    });
+  }
+
+  // === صورة المنتج الرئيسية ===
+  const prodImgInput = $('#editProductImageInput');
+  if (prodImgInput) {
+    prodImgInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) { toast('الرجاء اختيار ملف صورة صالح', 'error'); prodImgInput.value=''; return; }
+      if (file.size > 5*1024*1024) { toast('الصورة يجب ألا تتجاوز 5MB', 'error'); prodImgInput.value=''; return; }
+      pendingProductImageFile = file;
+      $('#editImage').value = '';
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        $('#editProductImagePreview').src = ev.target.result;
+        $('#editProductImageUploadArea').classList.add('has-image');
+        $('#editProductImageStatus').textContent = `تم اختيار: ${file.name}`;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // === صور معرض المنتج ===
+  const galleryInput = $('#editGalleryFileInput');
+  if (galleryInput) {
+    galleryInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) { toast('الرجاء اختيار ملف صورة صالح', 'error'); return; }
+      if (file.size > 5*1024*1024) { toast('الصورة يجب ألا تتجاوز 5MB', 'error'); return; }
+      pendingGalleryFiles.push(file);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        // أضف معاينة مؤقتة
+        const list = $('#galleryPreviewList');
+        const div = document.createElement('div');
+        div.style.cssText = 'position:relative;display:inline-block';
+        div.innerHTML = `<img src="${ev.target.result}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:2px dashed var(--gold)"/>`;
+        list.appendChild(div);
+        $('#editGalleryStatus').textContent = `${pendingGalleryFiles.length} صورة جديدة جاهزة للرفع`;
+      };
+      reader.readAsDataURL(file);
+      galleryInput.value = '';
     });
   }
 });
@@ -1343,6 +1406,7 @@ function renderProductsPage() {
     <div class="card">
       <h3><i class="fas fa-boxes"></i> إدارة المنتجات (eman_products)</h3>
       <div class="bulk-actions">
+        <button class="btn" onclick="openAddModal()"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
         <button class="btn danger" onclick="deleteFirst16Products()"><i class="fas fa-trash"></i> حذف أول 16 منتج</button>
         <button class="btn secondary" onclick="loadProductsAndRender()"><i class="fas fa-sync-alt"></i> تحديث</button>
       </div>
@@ -1415,15 +1479,71 @@ async function deleteFirst16Products() {
   }
 }
 
+function resetProductModal() {
+  pendingProductImageFile = null;
+  pendingGalleryFiles = [];
+  $('#editProductImageUrl').value = '';
+  $('#editProductImagePreview').src = '';
+  $('#editProductImageUploadArea').classList.remove('has-image');
+  $('#editProductImageStatus').textContent = '';
+  $('#editGalleryStatus').textContent = '';
+  $('#galleryPreviewList').innerHTML = '';
+}
+
+function previewProductImageFromUrl(url) {
+  if (url) {
+    $('#editProductImagePreview').src = url;
+    $('#editProductImageUploadArea').classList.add('has-image');
+  } else {
+    $('#editProductImagePreview').src = '';
+    $('#editProductImageUploadArea').classList.remove('has-image');
+  }
+}
+
+function openAddModal() {
+  resetProductModal();
+  $('#editModalTitle').textContent = 'إضافة منتج جديد';
+  $('#editProductId').value = '';
+  $('#editSlug').value = '';
+  $('#editCategory').value = '';
+  $('#editIcon').value = 'fas fa-cube';
+  $('#editImage').value = '';
+  $('#editGallery').value = '[]';
+  $('#editSortOrder').value = PRODUCTS.length;
+  $('#editIsActive').value = 'true';
+  $('#editNameAr').value = '';
+  $('#editNameEn').value = '';
+  $('#editNamePl').value = '';
+  $('#editNameDe').value = '';
+  $('#editShortAr').value = '';
+  $('#editShortEn').value = '';
+  $('#editShortPl').value = '';
+  $('#editShortDe').value = '';
+  $('#editLongAr').value = '{}';
+  $('#editLongEn').value = '{}';
+  $('#editLongPl').value = '{}';
+  $('#editLongDe').value = '{}';
+  $('#editModal').classList.add('show');
+}
+
 function openEditModal(id) {
   const product = PRODUCTS.find(p => p.id === id);
   if (!product) return;
+  resetProductModal();
+  $('#editModalTitle').textContent = 'تعديل المنتج';
   $('#editProductId').value = product.id;
   $('#editSlug').value = product.slug || '';
   $('#editCategory').value = product.category || '';
   $('#editIcon').value = product.icon || '';
   $('#editImage').value = product.image || '';
-  $('#editGallery').value = JSON.stringify(product.gallery || []);
+  if (product.image) {
+    $('#editProductImagePreview').src = product.image;
+    $('#editProductImageUploadArea').classList.add('has-image');
+  }
+  // عرض صور المعرض الحالية
+  const gallery = product.gallery || [];
+  $('#editGallery').value = JSON.stringify(gallery);
+  renderGalleryPreviews(gallery);
   $('#editSortOrder').value = product.sort_order || 0;
   $('#editIsActive').value = product.is_active ? 'true' : 'false';
   $('#editNameAr').value = product.name?.ar || '';
@@ -1442,58 +1562,107 @@ function openEditModal(id) {
   $('#editModal').classList.add('show');
 }
 
+function renderGalleryPreviews(urls) {
+  const list = $('#galleryPreviewList');
+  if (!list) return;
+  list.innerHTML = urls.filter(u=>u).map((u,i) => `
+    <div style="position:relative;display:inline-block">
+      <img src="${u}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" onerror="this.style.display='none'"/>
+      <button type="button" onclick="removeGalleryItem(${i})" style="position:absolute;top:-5px;right:-5px;background:var(--danger);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-times"></i></button>
+    </div>`).join('');
+}
+
+function removeGalleryItem(i) {
+  try {
+    const arr = JSON.parse($('#editGallery').value || '[]');
+    arr.splice(i,1);
+    $('#editGallery').value = JSON.stringify(arr);
+    renderGalleryPreviews(arr);
+  } catch(e) {}
+}
+
+async function uploadProductImage(file, folder='products') {
+  const ext = file.name.split('.').pop();
+  const name = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2,8)}.${ext}`;
+  const { data, error } = await sb.storage.from('eman-images').upload(name, file, { cacheControl:'3600', upsert:false });
+  if (error) throw new Error('فشل رفع الصورة: ' + error.message);
+  const { data: urlData } = sb.storage.from('eman-images').getPublicUrl(name);
+  return urlData.publicUrl;
+}
+
 function closeEditModal() {
   $('#editModal').classList.remove('show');
+  resetProductModal();
 }
 
 async function saveProduct(e) {
   e.preventDefault();
   const id = $('#editProductId').value;
-  if (!id) return;
-
-  let gallery = [];
-  try { gallery = JSON.parse($('#editGallery').value.trim() || '[]'); } catch(e) { toast('صيغة JSON غير صحيحة للمعرض', 'error'); return; }
-
-  let longAr = {}, longEn = {}, longPl = {}, longDe = {};
-  try {
-    longAr = JSON.parse($('#editLongAr').value.trim() || '{}');
-    longEn = JSON.parse($('#editLongEn').value.trim() || '{}');
-    longPl = JSON.parse($('#editLongPl').value.trim() || '{}');
-    longDe = JSON.parse($('#editLongDe').value.trim() || '{}');
-  } catch(e) { toast('صيغة JSON غير صحيحة في الوصف الكامل', 'error'); return; }
-
-  const updates = {
-    slug: $('#editSlug').value.trim(),
-    category: $('#editCategory').value.trim(),
-    icon: $('#editIcon').value.trim(),
-    image: $('#editImage').value.trim(),
-    gallery: gallery,
-    sort_order: parseInt($('#editSortOrder').value) || 0,
-    is_active: $('#editIsActive').value === 'true',
-    name: {
-      ar: $('#editNameAr').value.trim(),
-      en: $('#editNameEn').value.trim(),
-      pl: $('#editNamePl').value.trim(),
-      de: $('#editNameDe').value.trim()
-    },
-    short_desc: {
-      ar: $('#editShortAr').value.trim(),
-      en: $('#editShortEn').value.trim(),
-      pl: $('#editShortPl').value.trim(),
-      de: $('#editShortDe').value.trim()
-    },
-    long_content: { ar: longAr, en: longEn, pl: longPl, de: longDe },
-    updated_at: new Date().toISOString()
-  };
+  const saveBtn = e.target.querySelector('[type="submit"]');
+  const origText = saveBtn.innerHTML;
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
 
   try {
-    const { error } = await sb.from('eman_products').update(updates).eq('id', id);
-    if (error) throw error;
-    toast('تم حفظ التعديلات');
+    // رفع صورة المنتج الرئيسية
+    let mainImage = $('#editImage').value.trim();
+    if (pendingProductImageFile) {
+      $('#editProductImageStatus').textContent = 'جاري رفع الصورة الرئيسية...';
+      mainImage = await uploadProductImage(pendingProductImageFile, 'products');
+      $('#editProductImageStatus').textContent = 'تم الرفع ✓';
+    }
+
+    // رفع صور المعرض الجديدة
+    let gallery = [];
+    try { gallery = JSON.parse($('#editGallery').value.trim() || '[]'); } catch(e) { gallery = []; }
+    for (let i = 0; i < pendingGalleryFiles.length; i++) {
+      $('#editGalleryStatus').textContent = `جاري رفع صورة معرض ${i+1}/${pendingGalleryFiles.length}...`;
+      const url = await uploadProductImage(pendingGalleryFiles[i], 'gallery');
+      gallery.push(url);
+    }
+    $('#editGalleryStatus').textContent = pendingGalleryFiles.length ? 'تم رفع جميع صور المعرض ✓' : '';
+
+    let longAr = {}, longEn = {}, longPl = {}, longDe = {};
+    try {
+      longAr = JSON.parse($('#editLongAr').value.trim() || '{}');
+      longEn = JSON.parse($('#editLongEn').value.trim() || '{}');
+      longPl = JSON.parse($('#editLongPl').value.trim() || '{}');
+      longDe = JSON.parse($('#editLongDe').value.trim() || '{}');
+    } catch(e) { toast('صيغة JSON غير صحيحة في الوصف الكامل', 'error'); saveBtn.disabled=false; saveBtn.innerHTML=origText; return; }
+
+    const payload = {
+      slug: $('#editSlug').value.trim(),
+      category: $('#editCategory').value.trim(),
+      icon: $('#editIcon').value.trim(),
+      image: mainImage,
+      gallery: gallery,
+      sort_order: parseInt($('#editSortOrder').value) || 0,
+      is_active: $('#editIsActive').value === 'true',
+      name: { ar:$('#editNameAr').value.trim(), en:$('#editNameEn').value.trim(), pl:$('#editNamePl').value.trim(), de:$('#editNameDe').value.trim() },
+      short_desc: { ar:$('#editShortAr').value.trim(), en:$('#editShortEn').value.trim(), pl:$('#editShortPl').value.trim(), de:$('#editShortDe').value.trim() },
+      long_content: { ar:longAr, en:longEn, pl:longPl, de:longDe },
+      updated_at: new Date().toISOString()
+    };
+
+    if (id) {
+      // تعديل منتج موجود
+      const { error } = await sb.from('eman_products').update(payload).eq('id', id);
+      if (error) throw error;
+      toast('تم حفظ التعديلات ✓');
+    } else {
+      // إضافة منتج جديد
+      payload.created_at = new Date().toISOString();
+      const { error } = await sb.from('eman_products').insert(payload);
+      if (error) throw error;
+      toast('تمت إضافة المنتج بنجاح ✓');
+    }
     closeEditModal();
     await loadProductsAndRender();
   } catch(e) {
     toast('خطأ: ' + e.message, 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = origText;
   }
 }
 
@@ -1574,7 +1743,10 @@ window.loadProductsAndRender = loadProductsAndRender;
 window.deleteProduct = deleteProduct;
 window.deleteFirst16Products = deleteFirst16Products;
 window.openEditModal = openEditModal;
+window.openAddModal = openAddModal;
 window.closeEditModal = closeEditModal;
+window.removeGalleryItem = removeGalleryItem;
+window.previewProductImageFromUrl = previewProductImageFromUrl;
 window.addNewApp = addNewApp;
 window.editApp = editApp;
 window.closeAppModal = closeAppModal;
