@@ -293,6 +293,14 @@ main { flex:1; overflow-y:auto; height:100vh; }
     <form id="appForm">
       <input type="hidden" id="appEditIndex" value="-1" />
       <input type="hidden" id="appImageUrl" value="" />
+
+      <!-- المنتج المرتبط -->
+      <div class="field">
+        <label>المنتج المرتبط بهذا الاستخدام</label>
+        <select id="appProductSlug" required style="width:100%;padding:10px 12px;background:#0f0f0f;border:1px solid var(--border);color:var(--white);font-size:0.88rem;border-radius:4px;font-family:'Cairo',sans-serif;">
+          <option value="">-- اختر المنتج --</option>
+        </select>
+      </div>
       
       <!-- منطقة رفع الصورة -->
       <div class="field">
@@ -597,7 +605,7 @@ function mergeDefaults(existing) {
   }
   merge(merged, existing);
   if (merged.applications) {
-    merged.applications = merged.applications.map(app => ({ image: app.image || '', title: app.title || {}, desc: app.desc || {} }));
+    merged.applications = merged.applications.map(app => ({ product_slug: app.product_slug || '', image: app.image || '', title: app.title || {}, desc: app.desc || {} }));
   }
   return merged;
 }
@@ -830,6 +838,7 @@ function renderApps() {
           ${imageUrl ? `<img src="${imageUrl}" onerror="this.style.display='none'">` : '<div style="width:60px;height:60px;background:#333;border-radius:4px;display:flex;align-items:center;justify-content:center"><i class="fas fa-image" style="opacity:0.5"></i></div>'}
           <div class="app-info">
             <div class="app-title">${titleAr || 'بدون عنوان'}</div>
+            <div class="app-desc" style="color:var(--gold);font-size:0.78rem;margin-bottom:4px">${app.product_slug ? '📦 ' + (PRODUCTS.find(p=>p.slug===app.product_slug)?.name?.ar || app.product_slug) : '⚠️ غير مرتبط بمنتج'}</div>
             <div class="app-desc">${(app.desc && app.desc.ar) ? app.desc.ar.substring(0,60)+'...' : ''}</div>
           </div>
         </div>
@@ -850,8 +859,22 @@ function renderApps() {
 }
 
 // دوال رفع الصور والمودال
+function populateAppProductSelect(selectedSlug) {
+  const sel = $('#appProductSlug');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- اختر المنتج --</option>';
+  (PRODUCTS || []).forEach(p => {
+    const name = (p.name && p.name.ar) || p.slug || p.name?.en || '-';
+    const opt = document.createElement('option');
+    opt.value = p.slug || '';
+    opt.textContent = name;
+    if (p.slug === selectedSlug) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
 function addNewApp() {
-  $('#appModalTitle').textContent = 'إضافة استخدام جديد';
+  '$appModalTitle').textContent = 'إضافة استخدام جديد';
   $('#appEditIndex').value = '-1';
   $('#appImageUrl').value = '';
   $('#appImagePreview').src = '';
@@ -866,6 +889,7 @@ function addNewApp() {
   $('#appDescEn').value = '';
   $('#appDescPl').value = '';
   $('#appDescDe').value = '';
+  populateAppProductSelect('');
   $('#appModal').classList.add('show');
 }
 
@@ -893,6 +917,7 @@ function editApp(index) {
   $('#appDescEn').value = app.desc?.en || '';
   $('#appDescPl').value = app.desc?.pl || '';
   $('#appDescDe').value = app.desc?.de || '';
+  populateAppProductSelect(app.product_slug || '');
   $('#appModal').classList.add('show');
 }
 
@@ -1022,6 +1047,7 @@ async function saveApp(e) {
     }
     
     const newApp = {
+      product_slug: $('#appProductSlug').value.trim(),
       image: imageUrl,
       title: {
         ar: $('#appTitleAr').value.trim(),
