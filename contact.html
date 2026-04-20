@@ -25,7 +25,7 @@
 
 <section class="section">
   <div class="container">
-    <p class="reveal" data-key="contact_intro" style="max-width:800px;margin:0 auto 48px;text-align:center;font-size:0.95rem;color:#444;line-height:1.9"></p>
+    <div class="reveal" id="contactIntroText" style="max-width:800px;margin:0 auto 48px;text-align:center;font-size:0.95rem;color:#444;line-height:1.9"></div>
 
     <div class="contact-grid">
       <div class="contact-text reveal">
@@ -128,9 +128,21 @@ async function submitForm() {
 
 window.onReady = () => {
   renderContactInfo();
+  renderContactIntro();
   document.getElementById('fSubmit').addEventListener('click', submitForm);
 };
-window.onLangChange = renderContactInfo;
+window.onLangChange = () => {
+  renderContactInfo();
+  renderContactIntro();
+};
+
+function renderContactIntro() {
+  const el = document.getElementById('contactIntroText');
+  if (!el) return;
+  const text = EW.t('contact_intro');
+  // تحويل السطر الجديد إلى فقرات
+  el.innerHTML = text.split('\n\n').map(p => `<p style="margin-bottom:14px">${p}</p>`).join('');
+}
 EW.sharedInit('contact');
 </script>
 </body>
