@@ -97,6 +97,9 @@ function renderProduct() {
       </div>`;
   }).join('');
 
+  // أقسام إضافية لمنتج الرخام
+  const marbleExtraHtml = (prod.slug === 'marble' || prod.slug === 'natural-marble' || (prod.category && prod.category.toLowerCase().includes('marble')) || (EW.loc(prod.name) && EW.loc(prod.name).toLowerCase().includes('marbre')) || (prod.slug && prod.slug.toLowerCase().includes('marble'))) ? renderMarbleExtra() : '';
+
   // معرض الصور
   const gallery = (prod.gallery && Array.isArray(prod.gallery)) ? prod.gallery.filter(g => g) : [];
   const galleryHtml = gallery.length ? `
@@ -126,6 +129,7 @@ function renderProduct() {
       <div class="container" style="max-width:900px">
         ${lc.intro ? `<div class="product-section reveal"><p style="font-size:1rem;line-height:2;color:#333">${lc.intro.replace(/\n/g,'</p><p style="font-size:1rem;line-height:2;color:#333;margin-top:14px">')}</p></div>` : ''}
         ${appsHtml}
+        ${marbleExtraHtml}
         ${galleryHtml}
         ${sectionsHtml}
         <div style="text-align:center; margin-top:60px">
@@ -143,6 +147,73 @@ function renderProduct() {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); o.unobserve(e.target); }});
     }, { threshold:0.1 }).observe(el);
   });
+}
+
+function renderMarbleExtra() {
+  const lang = EW.getLang();
+  const sections = {
+    ar: {
+      q_title: 'ما الذي نراعيه؟',
+      q_intro: 'نعمل على مراعاة عدد من العناصر الأساسية عند توريد الرخام، مثل:',
+      q_items: ['النوع واللون','التجهيز المطلوب','المقاسات','التشطيب','التعبئة','أسلوب الشحن','احتياجات المشروع أو السوق'],
+      f_title: 'التشطيبات',
+      f_intro: 'بحسب نوع المنتج والاتفاق، يمكن مناقشة صور تشطيب مختلفة مثل:',
+      f_items: ['مصقول','نصف مصقول','مشطوف أو تجهيزات خاصة','مقاسات حسب الطلب'],
+      p_title: 'التعبئة والشحن',
+      p_text: 'نولي اهتمامًا كبيرًا بطريقة تعبئة الرخام وحمايته أثناء النقل، بما يتناسب مع طبيعة المنتج سواء كان ألواحًا أو بلاطات أو كتلًا خامًا، وبما يضمن تقليل مخاطر النقل وتحسين كفاءة التوريد.',
+      closing: 'نحن لا نكتفي بتوفير الرخام كمنتج، بل نعمل على تقديمه ضمن إطار تجاري منظم يراعي المواصفة، وطبيعة الاستخدام، وطريقة التجهيز، ومتطلبات السوق الأوروبي.',
+    },
+    en: {
+      q_title: 'What Do We Consider?',
+      q_intro: 'We pay attention to a number of key elements when supplying marble, such as:',
+      q_items: ['Type and Color','Required Preparation','Dimensions','Finish','Packaging','Shipping Method','Project or Market Needs'],
+      f_title: 'Finishes',
+      f_intro: 'Depending on the product type and agreement, different finish types can be discussed, such as:',
+      f_items: ['Polished','Semi-polished','Chamfered or special finishes','Custom dimensions on request'],
+      p_title: 'Packaging & Shipping',
+      p_text: 'We pay great attention to the method of packaging and protecting marble during transport, in line with the nature of the product — whether slabs, tiles, or raw blocks — ensuring reduced transport risks and improved supply efficiency.',
+      closing: 'We do not simply supply marble as a product; we present it within an organized commercial framework that considers the specification, nature of use, preparation method, and requirements of the European market.',
+    },
+    pl: {
+      q_title: 'Na co zwracamy uwagę?',
+      q_intro: 'Przy dostawie marmuru uwzględniamy szereg kluczowych elementów, takich jak:',
+      q_items: ['Typ i kolor','Wymagane przygotowanie','Wymiary','Wykończenie','Pakowanie','Metoda wysyłki','Potrzeby projektu lub rynku'],
+      f_title: 'Wykończenia',
+      f_intro: 'W zależności od rodzaju produktu i umowy można omówić różne rodzaje wykończeń, takie jak:',
+      f_items: ['Polerowane','Półpolerowane','Fasetowane lub specjalne wykończenia','Wymiary na zamówienie'],
+      p_title: 'Pakowanie i wysyłka',
+      p_text: 'Przywiązujemy dużą wagę do metody pakowania i ochrony marmuru podczas transportu, stosownie do charakteru produktu — czy to płyty, płytki czy surowe bloki — zapewniając zmniejszenie ryzyka transportowego i poprawę efektywności dostaw.',
+      closing: 'Nie tylko dostarczamy marmur jako produkt — prezentujemy go w zorganizowanych ramach handlowych, uwzględniając specyfikację, charakter zastosowania, metodę przygotowania i wymagania rynku europejskiego.',
+    },
+    de: {
+      q_title: 'Worauf achten wir?',
+      q_intro: 'Bei der Lieferung von Marmor berücksichtigen wir eine Reihe wesentlicher Elemente, wie zum Beispiel:',
+      q_items: ['Typ und Farbe','Erforderliche Vorbereitung','Abmessungen','Oberfläche','Verpackung','Versandmethode','Projekt- oder Marktanforderungen'],
+      f_title: 'Oberflächen',
+      f_intro: 'Je nach Produktart und Vereinbarung können verschiedene Oberflächenarten besprochen werden, wie zum Beispiel:',
+      f_items: ['Poliert','Halbpoliert','Gefast oder Sonderbearbeitung','Abmessungen auf Anfrage'],
+      p_title: 'Verpackung & Versand',
+      p_text: 'Wir legen großen Wert auf die Verpackungs- und Schutzmethode von Marmor beim Transport, entsprechend der Produktart — ob Platten, Fliesen oder Rohblöcke — um Transportrisiken zu minimieren und die Liefereffizienz zu verbessern.',
+      closing: 'Wir liefern Marmor nicht nur als Produkt — wir präsentieren ihn in einem organisierten kommerziellen Rahmen, der Spezifikation, Verwendungszweck, Vorbereitungsmethode und Anforderungen des europäischen Marktes berücksichtigt.',
+    }
+  };
+  const s = sections[lang] || sections.en;
+  return \`
+    <div class="product-section reveal">
+      <h2>\${s.q_title}</h2>
+      <p style="color:#444;line-height:2;margin-bottom:16px">\${s.q_intro}</p>
+      <ul class="product-list">\${s.q_items.map(i=>\`<li>\${i}</li>\`).join('')}</ul>
+    </div>
+    <div class="product-section reveal">
+      <h2>\${s.f_title}</h2>
+      <p style="color:#444;line-height:2;margin-bottom:16px">\${s.f_intro}</p>
+      <ul class="product-list">\${s.f_items.map(i=>\`<li>\${i}</li>\`).join('')}</ul>
+    </div>
+    <div class="product-section reveal">
+      <h2>\${s.p_title}</h2>
+      <p style="color:#444;line-height:2">\${s.p_text}</p>
+    </div>
+    <div class="product-note">\${s.closing}</div>\`;
 }
 
 window.onReady = renderProduct;
