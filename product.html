@@ -15,191 +15,178 @@
 <div id="preloader"><img src="logo.png" alt="" class="loader-logo" onerror="this.style.display='none'"/></div>
 
 <nav class="navbar" id="navbar"></nav>
-
 <div id="productContent"></div>
-
 <footer class="footer" id="footer"></footer>
 <div id="fab"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="shared.js"></script>
 <script>
+
+function makeImg(src, cls) {
+  if (!src) return '<div class="' + cls + '-placeholder"><i class="fas fa-image"></i></div>';
+  var el = document.createElement('img');
+  el.src = src; el.alt = ''; el.className = cls;
+  el.setAttribute('onerror', "this.style.display='none'");
+  return el.outerHTML;
+}
+
 function getSlug() {
-  const p = new URLSearchParams(location.search);
-  return p.get('slug') || '';
+  return new URLSearchParams(location.search).get('slug') || '';
 }
 
 function renderProduct() {
-  const slug = getSlug();
-  const prods = EW.getProducts();
-  const prod = prods.find(p => p.slug === slug);
-  const wrap = document.getElementById('productContent');
+  var slug = getSlug();
+  var prods = EW.getProducts();
+  var prod = null;
+  for (var i = 0; i < prods.length; i++) { if (prods[i].slug === slug) { prod = prods[i]; break; } }
+  var wrap = document.getElementById('productContent');
 
   if (!prod) {
-    wrap.innerHTML = `
-      <header class="page-header"><div class="container"><h1>Product Not Found</h1><div class="line"></div></div></header>
-      <section class="section"><div class="container" style="text-align:center">
-        <p style="color:#666;margin-bottom:24px">---</p>
-        <a href="products.html" class="hero-btn" style="color:var(--black);border-color:var(--black)">← ${EW.t('nav_products')}</a>
-      </div></section>`;
+    wrap.innerHTML = '<header class="page-header"><div class="container"><h1>Product Not Found</h1><div class="line"></div></div></header>' +
+      '<section class="section"><div class="container" style="text-align:center">' +
+      '<p style="color:#666;margin-bottom:24px">---</p>' +
+      '<a href="products.html" class="hero-btn" style="color:var(--black);border-color:var(--black)">\u2190 ' + EW.t('nav_products') + '</a>' +
+      '</div></section>';
     return;
   }
 
-  // استخدامات المنتج من CONTENT.applications
-  const allApps = EW.getContent().applications || [];
-  const prodApps = allApps.filter(a => a.product_slug === slug);
-  const appsTitle = EW.getLang()==='ar' ? 'الاستخدامات الصناعية' : EW.getLang()==='pl' ? 'Zastosowania Przemysłowe' : EW.getLang()==='de' ? 'Industrielle Anwendungen' : 'Industrial Applications';
-  const appsHtml = prodApps.length ? `
-    <div class="product-section reveal">
-      <h2>${appsTitle}</h2>
-      <div class="uses-grid">
-        ${prodApps.map(u => `
-          <div class="use-card">
-            ${u.image ? '<img class="use-card-img" src="' + u.image + '" alt="" onerror="this.style.display='none'"/>' : '<div class="use-card-img-placeholder"><i class="fas fa-image"></i></div>'}
-            <div class="use-card-body">
-              <h4>${EW.loc(u.title)||''}</h4>
-              <p>${EW.loc(u.desc)||''}</p>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>` : '';
+  var lang = EW.getLang();
+  var allApps = EW.getContent().applications || [];
+  var prodApps = allApps.filter(function(a) { return a.product_slug === slug; });
+  var appsTitle = lang === 'ar' ? '\u0627\u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645\u0627\u062a \u0627\u0644\u0635\u0646\u0627\u0639\u064a\u0629'
+    : lang === 'pl' ? 'Zastosowania Przemys\u0142owe'
+    : lang === 'de' ? 'Industrielle Anwendungen' : 'Industrial Applications';
 
-  // المحتوى الطويل
-  const lc = prod.long_content?.[EW.getLang()] || prod.long_content?.en || prod.long_content?.pl || {};
-  const sections = lc.sections || [];
+  var appsHtml = '';
+  if (prodApps.length) {
+    var cards = prodApps.map(function(u) {
+      return '<div class="use-card">' + makeImg(u.image, 'use-card-img') +
+        '<div class="use-card-body"><h4>' + (EW.loc(u.title) || '') + '</h4><p>' + (EW.loc(u.desc) || '') + '</p></div></div>';
+    }).join('');
+    appsHtml = '<div class="product-section reveal"><h2>' + appsTitle + '</h2><div class="uses-grid">' + cards + '</div></div>';
+  }
 
+  var lc = (prod.long_content && (prod.long_content[lang] || prod.long_content.en || prod.long_content.pl)) || {};
+  var sections = lc.sections || [];
   document.title = EW.loc(prod.name) + ' | Eman Warsaw';
 
-  const sectionsHtml = sections.map(s => {
-    let body = '';
+  var sectionsHtml = sections.map(function(s) {
+    var body = '';
     if (s.type === 'text') {
-      body = `<p>${(s.content||'').replace(/\n/g,'</p><p>')}</p>`;
+      body = '<p>' + (s.content || '').replace(/\n/g, '</p><p>') + '</p>';
     } else if (s.type === 'list') {
-      const items = (s.items||[]).map(it => `<li>${it}</li>`).join('');
-      body = `<ul class="product-list">${items}</ul>`;
+      body = '<ul class="product-list">' + (s.items || []).map(function(it) { return '<li>' + it + '</li>'; }).join('') + '</ul>';
     } else if (s.type === 'uses') {
-      const items = (s.items||[]).map(u => `
-        <div class="use-card">
-          ${u.image ? '<img class="use-card-img" src="' + u.image + '" alt="" onerror="this.style.display='none'"/>' : '<div class="use-card-img-placeholder"><i class="fas fa-image"></i></div>'}
-          <div class="use-card-body">
-            <h4>${u.title||''}</h4>
-            <p>${u.desc||''}</p>
-          </div>
-        </div>`).join('');
-      body = `<div class="uses-grid">${items}</div>`;
+      var uc = (s.items || []).map(function(u) {
+        return '<div class="use-card">' + makeImg(u.image, 'use-card-img') +
+          '<div class="use-card-body"><h4>' + (u.title || '') + '</h4><p>' + (u.desc || '') + '</p></div></div>';
+      }).join('');
+      body = '<div class="uses-grid">' + uc + '</div>';
     } else if (s.type === 'note') {
-      return `<div class="product-note">${s.content||''}</div>`;
+      return '<div class="product-note">' + (s.content || '') + '</div>';
     }
-    return `
-      <div class="product-section reveal">
-        ${s.heading ? `<h2>${s.heading}</h2>` : ''}
-        ${body}
-      </div>`;
+    return '<div class="product-section reveal">' + (s.heading ? '<h2>' + s.heading + '</h2>' : '') + body + '</div>';
   }).join('');
 
-  // أقسام إضافية لمنتج الرخام
-  const marbleExtraHtml = (prod.slug === 'marble' || prod.slug === 'natural-marble' || (prod.category && prod.category.toLowerCase().includes('marble')) || (EW.loc(prod.name) && EW.loc(prod.name).toLowerCase().includes('marbre')) || (prod.slug && prod.slug.toLowerCase().includes('marble'))) ? renderMarbleExtra() : '';
+  var marbleCheck = prod.slug === 'marble' || prod.slug === 'natural-marble' ||
+    (prod.category && prod.category.toLowerCase().includes('marble')) ||
+    (EW.loc(prod.name) && EW.loc(prod.name).toLowerCase().includes('marbre')) ||
+    (prod.slug && prod.slug.toLowerCase().includes('marble'));
+  var marbleExtraHtml = marbleCheck ? renderMarbleExtra() : '';
 
-  // معرض الصور
-  const gallery = (prod.gallery && Array.isArray(prod.gallery)) ? prod.gallery.filter(g => g) : [];
-  const galleryHtml = gallery.length ? `
-    <div class="product-section reveal">
-      <h2>${EW.getLang()==='ar'?'معرض الصور':EW.getLang()==='pl'?'Galeria':EW.getLang()==='de'?'Galerie':'Gallery'}</h2>
-      <div class="product-gallery">
-        ${gallery.map(src => `<img src="${src}" alt="" onerror="this.style.display='none'" onclick="openLightbox('${src}')"/>`).join('')}
-      </div>
-    </div>` : '';
+  var gallery = (prod.gallery && Array.isArray(prod.gallery)) ? prod.gallery.filter(function(g) { return g; }) : [];
+  var galleryHtml = '';
+  if (gallery.length) {
+    var glabel = lang === 'ar' ? '\u0645\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u0631' : lang === 'pl' ? 'Galeria' : lang === 'de' ? 'Galerie' : 'Gallery';
+    var gimgs = gallery.map(function(src) {
+      var el = document.createElement('img');
+      el.src = src; el.alt = '';
+      el.setAttribute('onerror', "this.style.display='none'");
+      el.setAttribute('onclick', "openLightbox('" + src + "')");
+      return el.outerHTML;
+    }).join('');
+    galleryHtml = '<div class="product-section reveal"><h2>' + glabel + '</h2><div class="product-gallery">' + gimgs + '</div></div>';
+  }
 
-  wrap.innerHTML = `
-    <section class="product-hero">
-      <div class="container">
-        <div class="product-hero-inner">
-          <div class="product-hero-text">
-            <div class="icon"><i class="${prod.icon||'fas fa-cube'}"></i></div>
-            <h1>${EW.loc(prod.name)}</h1>
-            <p>${EW.loc(prod.short_desc)}</p>
-          </div>
-          <div class="product-hero-img">
-            ${prod.image ? `<img src="${prod.image}" alt="" onerror="this.style.display='none'"/>` : ''}
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="product-body">
-      <div class="container" style="max-width:900px">
-        ${lc.intro ? `<div class="product-section reveal"><p style="font-size:1rem;line-height:2;color:#333">${lc.intro.replace(/\n/g,'</p><p style="font-size:1rem;line-height:2;color:#333;margin-top:14px">')}</p></div>` : ''}
-        ${appsHtml}
-        ${marbleExtraHtml}
-        ${galleryHtml}
-        ${sectionsHtml}
-        <div style="text-align:center; margin-top:60px">
-          <a href="contact.html" class="pc-cta" style="padding:14px 40px; font-size:0.82rem">${EW.t('nav_contact')}</a>
-        </div>
-      </div>
-    </section>
-    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-      <div class="lb-close"><i class="fas fa-times"></i></div>
-      <img id="lightboxImg" src="" alt=""/>
-    </div>`;
+  var introHtml = lc.intro
+    ? '<div class="product-section reveal"><p style="font-size:1rem;line-height:2;color:#333">' +
+      lc.intro.replace(/\n/g, '</p><p style="font-size:1rem;line-height:2;color:#333;margin-top:14px">') + '</p></div>'
+    : '';
 
-  document.querySelectorAll('.product-section.reveal').forEach(el => {
-    new IntersectionObserver((entries, o) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); o.unobserve(e.target); }});
-    }, { threshold:0.1 }).observe(el);
+  wrap.innerHTML =
+    '<section class="product-hero"><div class="container"><div class="product-hero-inner">' +
+    '<div class="product-hero-text"><div class="icon"><i class="' + (prod.icon || 'fas fa-cube') + '"></i></div>' +
+    '<h1>' + EW.loc(prod.name) + '</h1><p>' + EW.loc(prod.short_desc) + '</p></div>' +
+    '<div class="product-hero-img">' + makeImg(prod.image, 'product-hero-img-el') + '</div>' +
+    '</div></div></section>' +
+    '<section class="product-body"><div class="container" style="max-width:900px">' +
+    introHtml + appsHtml + marbleExtraHtml + galleryHtml + sectionsHtml +
+    '<div style="text-align:center;margin-top:60px">' +
+    '<a href="contact.html" class="pc-cta" style="padding:14px 40px;font-size:0.82rem">' + EW.t('nav_contact') + '</a>' +
+    '</div></div></section>' +
+    '<div class="lightbox" id="lightbox" onclick="closeLightbox()">' +
+    '<div class="lb-close"><i class="fas fa-times"></i></div>' +
+    '<img id="lightboxImg" src="" alt=""/></div>';
+
+  document.querySelectorAll('.product-section.reveal').forEach(function(el) {
+    new IntersectionObserver(function(entries, o) {
+      entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); o.unobserve(e.target); } });
+    }, { threshold: 0.1 }).observe(el);
   });
 }
 
 function renderMarbleExtra() {
-  const lang = EW.getLang();
-  const sections = {
+  var lang = EW.getLang();
+  var data = {
     ar: {
-      q_title: 'ما الذي نراعيه؟',
-      q_intro: 'نعمل على مراعاة عدد من العناصر الأساسية عند توريد الرخام، مثل:',
-      q_items: ['النوع واللون','التجهيز المطلوب','المقاسات','التشطيب','التعبئة','أسلوب الشحن','احتياجات المشروع أو السوق'],
-      f_title: 'التشطيبات',
-      f_intro: 'بحسب نوع المنتج والاتفاق، يمكن مناقشة صور تشطيب مختلفة مثل:',
-      f_items: ['مصقول','نصف مصقول','مشطوف أو تجهيزات خاصة','مقاسات حسب الطلب'],
-      p_title: 'التعبئة والشحن',
-      p_text: 'نولي اهتمامًا كبيرًا بطريقة تعبئة الرخام وحمايته أثناء النقل، بما يتناسب مع طبيعة المنتج سواء كان ألواحًا أو بلاطات أو كتلًا خامًا، وبما يضمن تقليل مخاطر النقل وتحسين كفاءة التوريد.',
-      closing: 'نحن لا نكتفي بتوفير الرخام كمنتج، بل نعمل على تقديمه ضمن إطار تجاري منظم يراعي المواصفة، وطبيعة الاستخدام، وطريقة التجهيز، ومتطلبات السوق الأوروبي.',
+      q_title: '\u0645\u0627 \u0627\u0644\u0630\u064a \u0646\u0631\u0627\u0639\u064a\u0647\u061f',
+      q_intro: '\u0646\u0639\u0645\u0644 \u0639\u0644\u0649 \u0645\u0631\u0627\u0639\u0627\u0629 \u0639\u062f\u062f \u0645\u0646 \u0627\u0644\u0639\u0646\u0627\u0635\u0631 \u0627\u0644\u0623\u0633\u0627\u0633\u064a\u0629 \u0639\u0646\u062f \u062a\u0648\u0631\u064a\u062f \u0627\u0644\u0631\u062e\u0627\u0645\u060c \u0645\u062b\u0644:',
+      q_items: ['\u0627\u0644\u0646\u0648\u0639 \u0648\u0627\u0644\u0644\u0648\u0646', '\u0627\u0644\u062a\u062c\u0647\u064a\u0632 \u0627\u0644\u0645\u0637\u0644\u0648\u0628', '\u0627\u0644\u0645\u0642\u0627\u0633\u0627\u062a', '\u0627\u0644\u062a\u0634\u0637\u064a\u0628', '\u0627\u0644\u062a\u0639\u0628\u0626\u0629', '\u0623\u0633\u0644\u0648\u0628 \u0627\u0644\u0634\u062d\u0646', '\u0627\u062d\u062a\u064a\u0627\u062c\u0627\u062a \u0627\u0644\u0645\u0634\u0631\u0648\u0639 \u0623\u0648 \u0627\u0644\u0633\u0648\u0642'],
+      f_title: '\u0627\u0644\u062a\u0634\u0637\u064a\u0628\u0627\u062a',
+      f_intro: '\u0628\u062d\u0633\u0628 \u0646\u0648\u0639 \u0627\u0644\u0645\u0646\u062a\u062c \u0648\u0627\u0644\u0627\u062a\u0641\u0627\u0642\u060c \u064a\u0645\u0643\u0646 \u0645\u0646\u0627\u0642\u0634\u0629 \u0635\u0648\u0631 \u062a\u0634\u0637\u064a\u0628 \u0645\u062e\u062a\u0644\u0641\u0629 \u0645\u062b\u0644:',
+      f_items: ['\u0645\u0635\u0642\u0648\u0644', '\u0646\u0635\u0641 \u0645\u0635\u0642\u0648\u0644', '\u0645\u0634\u0637\u0648\u0641 \u0623\u0648 \u062a\u062c\u0647\u064a\u0632\u0627\u062a \u062e\u0627\u0635\u0629', '\u0645\u0642\u0627\u0633\u0627\u062a \u062d\u0633\u0628 \u0627\u0644\u0637\u0644\u0628'],
+      p_title: '\u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0627\u0644\u0634\u062d\u0646',
+      p_text: '\u0646\u0648\u0644\u064a \u0627\u0647\u062a\u0645\u0627\u0645\u064b\u0627 \u0643\u0628\u064a\u0631\u064b\u0627 \u0628\u0637\u0631\u064a\u0642\u0629 \u062a\u0639\u0628\u0626\u0629 \u0627\u0644\u0631\u062e\u0627\u0645 \u0648\u062d\u0645\u0627\u064a\u062a\u0647 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u0646\u0642\u0644.',
+      closing: '\u0646\u062d\u0646 \u0644\u0627 \u0646\u0643\u062a\u0641\u064a \u0628\u062a\u0648\u0641\u064a\u0631 \u0627\u0644\u0631\u062e\u0627\u0645 \u0643\u0645\u0646\u062a\u062c\u060c \u0628\u0644 \u0646\u0639\u0645\u0644 \u0639\u0644\u0649 \u062a\u0642\u062f\u064a\u0645\u0647 \u0636\u0645\u0646 \u0625\u0637\u0627\u0631 \u062a\u062c\u0627\u0631\u064a \u0645\u0646\u0638\u0645.'
     },
     en: {
       q_title: 'What Do We Consider?',
       q_intro: 'We pay attention to a number of key elements when supplying marble, such as:',
-      q_items: ['Type and Color','Required Preparation','Dimensions','Finish','Packaging','Shipping Method','Project or Market Needs'],
+      q_items: ['Type and Color', 'Required Preparation', 'Dimensions', 'Finish', 'Packaging', 'Shipping Method', 'Project or Market Needs'],
       f_title: 'Finishes',
       f_intro: 'Depending on the product type and agreement, different finish types can be discussed, such as:',
-      f_items: ['Polished','Semi-polished','Chamfered or special finishes','Custom dimensions on request'],
+      f_items: ['Polished', 'Semi-polished', 'Chamfered or special finishes', 'Custom dimensions on request'],
       p_title: 'Packaging & Shipping',
       p_text: 'We pay great attention to the method of packaging and protecting marble during transport, in line with the nature of the product — whether slabs, tiles, or raw blocks — ensuring reduced transport risks and improved supply efficiency.',
-      closing: 'We do not simply supply marble as a product; we present it within an organized commercial framework that considers the specification, nature of use, preparation method, and requirements of the European market.',
+      closing: 'We do not simply supply marble as a product; we present it within an organized commercial framework that considers the specification, nature of use, preparation method, and requirements of the European market.'
     },
     pl: {
-      q_title: 'Na co zwracamy uwagę?',
-      q_intro: 'Przy dostawie marmuru uwzględniamy szereg kluczowych elementów, takich jak:',
-      q_items: ['Typ i kolor','Wymagane przygotowanie','Wymiary','Wykończenie','Pakowanie','Metoda wysyłki','Potrzeby projektu lub rynku'],
-      f_title: 'Wykończenia',
-      f_intro: 'W zależności od rodzaju produktu i umowy można omówić różne rodzaje wykończeń, takie jak:',
-      f_items: ['Polerowane','Półpolerowane','Fasetowane lub specjalne wykończenia','Wymiary na zamówienie'],
-      p_title: 'Pakowanie i wysyłka',
-      p_text: 'Przywiązujemy dużą wagę do metody pakowania i ochrony marmuru podczas transportu, stosownie do charakteru produktu — czy to płyty, płytki czy surowe bloki — zapewniając zmniejszenie ryzyka transportowego i poprawę efektywności dostaw.',
-      closing: 'Nie tylko dostarczamy marmur jako produkt — prezentujemy go w zorganizowanych ramach handlowych, uwzględniając specyfikację, charakter zastosowania, metodę przygotowania i wymagania rynku europejskiego.',
+      q_title: 'Na co zwracamy uwag\u0119?',
+      q_intro: 'Przy dostawie marmuru uwzgl\u0119dniamy szereg kluczowych element\u00f3w, takich jak:',
+      q_items: ['Typ i kolor', 'Wymagane przygotowanie', 'Wymiary', 'Wyk\u0144czenie', 'Pakowanie', 'Metoda wysy\u0142ki', 'Potrzeby projektu lub rynku'],
+      f_title: 'Wyk\u0144czenia',
+      f_intro: 'W zale\u017cno\u015bci od rodzaju produktu i umowy mo\u017cna om\u00f3wi\u0107 r\u00f3\u017cne rodzaje wyk\u0144cze\u0144, takie jak:',
+      f_items: ['Polerowane', 'P\u00f3\u0142polerowane', 'Fasetowane lub specjalne wyk\u0144czenia', 'Wymiary na zam\u00f3wienie'],
+      p_title: 'Pakowanie i wysy\u0142ka',
+      p_text: 'Przywi\u0105zujemy du\u017c\u0105 wag\u0119 do metody pakowania i ochrony marmuru podczas transportu, stosownie do charakteru produktu \u2014 czy to p\u0142yty, p\u0142ytki czy surowe bloki.',
+      closing: 'Nie tylko dostarczamy marmur jako produkt \u2014 prezentujemy go w zorganizowanych ramach handlowych.'
     },
     de: {
       q_title: 'Worauf achten wir?',
-      q_intro: 'Bei der Lieferung von Marmor berücksichtigen wir eine Reihe wesentlicher Elemente, wie zum Beispiel:',
-      q_items: ['Typ und Farbe','Erforderliche Vorbereitung','Abmessungen','Oberfläche','Verpackung','Versandmethode','Projekt- oder Marktanforderungen'],
-      f_title: 'Oberflächen',
-      f_intro: 'Je nach Produktart und Vereinbarung können verschiedene Oberflächenarten besprochen werden, wie zum Beispiel:',
-      f_items: ['Poliert','Halbpoliert','Gefast oder Sonderbearbeitung','Abmessungen auf Anfrage'],
+      q_intro: 'Bei der Lieferung von Marmor ber\u00fccksichtigen wir eine Reihe wesentlicher Elemente, wie zum Beispiel:',
+      q_items: ['Typ und Farbe', 'Erforderliche Vorbereitung', 'Abmessungen', 'Oberfl\u00e4che', 'Verpackung', 'Versandmethode', 'Projekt- oder Marktanforderungen'],
+      f_title: 'Oberfl\u00e4chen',
+      f_intro: 'Je nach Produktart und Vereinbarung k\u00f6nnen verschiedene Oberfl\u00e4chenarten besprochen werden, wie zum Beispiel:',
+      f_items: ['Poliert', 'Halbpoliert', 'Gefast oder Sonderbearbeitung', 'Abmessungen auf Anfrage'],
       p_title: 'Verpackung & Versand',
-      p_text: 'Wir legen großen Wert auf die Verpackungs- und Schutzmethode von Marmor beim Transport, entsprechend der Produktart — ob Platten, Fliesen oder Rohblöcke — um Transportrisiken zu minimieren und die Liefereffizienz zu verbessern.',
-      closing: 'Wir liefern Marmor nicht nur als Produkt — wir präsentieren ihn in einem organisierten kommerziellen Rahmen, der Spezifikation, Verwendungszweck, Vorbereitungsmethode und Anforderungen des europäischen Marktes berücksichtigt.',
+      p_text: 'Wir legen gro\u00dfen Wert auf die Verpackungs- und Schutzmethode von Marmor beim Transport, entsprechend der Produktart \u2014 ob Platten, Fliesen oder Rohbl\u00f6cke.',
+      closing: 'Wir liefern Marmor nicht nur als Produkt \u2014 wir pr\u00e4sentieren ihn in einem organisierten kommerziellen Rahmen.'
     }
   };
-  const s = sections[lang] || sections.en;
-  const qItems = s.q_items.map(function(i){ return '<li>' + i + '</li>'; }).join('');
-  const fItems = s.f_items.map(function(i){ return '<li>' + i + '</li>'; }).join('');
+  var s = data[lang] || data.en;
+  var qItems = s.q_items.map(function(i) { return '<li>' + i + '</li>'; }).join('');
+  var fItems = s.f_items.map(function(i) { return '<li>' + i + '</li>'; }).join('');
   return '<div class="product-section reveal"><h2>' + s.q_title + '</h2>' +
     '<p style="color:#444;line-height:2;margin-bottom:16px">' + s.q_intro + '</p>' +
     '<ul class="product-list">' + qItems + '</ul></div>' +
@@ -215,12 +202,12 @@ window.onReady = renderProduct;
 window.onLangChange = renderProduct;
 
 window.openLightbox = function(src) {
-  const lb = document.getElementById('lightbox');
-  const img = document.getElementById('lightboxImg');
+  var lb = document.getElementById('lightbox');
+  var img = document.getElementById('lightboxImg');
   if (lb && img) { img.src = src; lb.classList.add('show'); }
 };
 window.closeLightbox = function() {
-  const lb = document.getElementById('lightbox');
+  var lb = document.getElementById('lightbox');
   if (lb) lb.classList.remove('show');
 };
 
