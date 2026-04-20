@@ -444,8 +444,7 @@ async function loadProducts() {
       .select('*')
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
-    // الاحتفاظ بآخر منتجين فقط (حذف أول 16 منتج وأي منتجات قبل الأخيرين)
-    PRODUCTS = (data || []).slice(-2);
+    PRODUCTS = data || [];
   } catch(e) {
     console.warn('Products failed:', e);
     PRODUCTS = [];
