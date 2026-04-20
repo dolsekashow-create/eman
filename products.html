@@ -39,8 +39,7 @@
 function renderProducts() {
   const grid = document.getElementById('productsGrid');
   const allProds = EW.getProducts();
-  // الاحتفاظ بآخر منتجين فقط (حذف أول 16 منتج وأي منتجات قبل الأخيرين)
-  const prods = allProds.slice(-2);
+  const prods = allProds;
   const cta = EW.t('products_cta');
   if (!prods.length) {
     grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;padding:40px">---</p>';
