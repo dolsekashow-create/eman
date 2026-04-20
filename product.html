@@ -55,7 +55,7 @@ function renderProduct() {
       <div class="uses-grid">
         ${prodApps.map(u => `
           <div class="use-card">
-            ${u.image ? `<img class="use-card-img" src="${u.image}" alt="" onerror="this.outerHTML='<div class=&quot;use-card-img-placeholder&quot;><i class=&quot;fas fa-image&quot;></i></div>'"/>` : `<div class="use-card-img-placeholder"><i class="fas fa-image"></i></div>`}
+            ${u.image ? '<img class="use-card-img" src="' + u.image + '" alt="" onerror="this.style.display='none'"/>' : '<div class="use-card-img-placeholder"><i class="fas fa-image"></i></div>'}
             <div class="use-card-body">
               <h4>${EW.loc(u.title)||''}</h4>
               <p>${EW.loc(u.desc)||''}</p>
@@ -80,7 +80,7 @@ function renderProduct() {
     } else if (s.type === 'uses') {
       const items = (s.items||[]).map(u => `
         <div class="use-card">
-          ${u.image ? `<img class="use-card-img" src="${u.image}" alt="" onerror="this.outerHTML='<div class=&quot;use-card-img-placeholder&quot;><i class=&quot;fas fa-image&quot;></i></div>'"/>` : `<div class="use-card-img-placeholder"><i class="fas fa-image"></i></div>`}
+          ${u.image ? '<img class="use-card-img" src="' + u.image + '" alt="" onerror="this.style.display='none'"/>' : '<div class="use-card-img-placeholder"><i class="fas fa-image"></i></div>'}
           <div class="use-card-body">
             <h4>${u.title||''}</h4>
             <p>${u.desc||''}</p>
@@ -198,22 +198,17 @@ function renderMarbleExtra() {
     }
   };
   const s = sections[lang] || sections.en;
-  return \`
-    <div class="product-section reveal">
-      <h2>\${s.q_title}</h2>
-      <p style="color:#444;line-height:2;margin-bottom:16px">\${s.q_intro}</p>
-      <ul class="product-list">\${s.q_items.map(i=>\`<li>\${i}</li>\`).join('')}</ul>
-    </div>
-    <div class="product-section reveal">
-      <h2>\${s.f_title}</h2>
-      <p style="color:#444;line-height:2;margin-bottom:16px">\${s.f_intro}</p>
-      <ul class="product-list">\${s.f_items.map(i=>\`<li>\${i}</li>\`).join('')}</ul>
-    </div>
-    <div class="product-section reveal">
-      <h2>\${s.p_title}</h2>
-      <p style="color:#444;line-height:2">\${s.p_text}</p>
-    </div>
-    <div class="product-note">\${s.closing}</div>\`;
+  const qItems = s.q_items.map(function(i){ return '<li>' + i + '</li>'; }).join('');
+  const fItems = s.f_items.map(function(i){ return '<li>' + i + '</li>'; }).join('');
+  return '<div class="product-section reveal"><h2>' + s.q_title + '</h2>' +
+    '<p style="color:#444;line-height:2;margin-bottom:16px">' + s.q_intro + '</p>' +
+    '<ul class="product-list">' + qItems + '</ul></div>' +
+    '<div class="product-section reveal"><h2>' + s.f_title + '</h2>' +
+    '<p style="color:#444;line-height:2;margin-bottom:16px">' + s.f_intro + '</p>' +
+    '<ul class="product-list">' + fItems + '</ul></div>' +
+    '<div class="product-section reveal"><h2>' + s.p_title + '</h2>' +
+    '<p style="color:#444;line-height:2">' + s.p_text + '</p></div>' +
+    '<div class="product-note">' + s.closing + '</div>';
 }
 
 window.onReady = renderProduct;
